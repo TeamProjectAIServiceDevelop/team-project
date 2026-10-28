@@ -1,4 +1,4 @@
-import { buildMessages, guideSchema, isBrowsing, parseGuide, type Guide, type GuideRequest } from "@/lib/guide";
+import { buildMessages, guideSchema, parseGuide, type Guide, type GuideRequest } from "@/lib/guide";
 
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "qwen2.5vl:7b";
@@ -51,6 +51,7 @@ function readRequest(body: unknown): GuideRequest | null {
     typeof b.height === "number" &&
     b.height > 0 &&
     typeof b.goal === "string" &&
+    b.goal.trim().length > 0 &&
     b.goal.length <= 200 &&
     Array.isArray(b.history) &&
     b.history.length <= 30 &&
@@ -61,26 +62,6 @@ function readRequest(body: unknown): GuideRequest | null {
 
 /** AI 서버 없이 화면 흐름을 확인할 때 쓰는 가짜 응답. 세 번째 단계에서 끝난다. */
 function mockGuide(req: GuideRequest): Guide {
-  if (isBrowsing(req)) {
-    if (req.history.length === 0) {
-      return {
-        stage: "처음 화면",
-        button: "주문하기",
-        where: "화면 가운데",
-        box: { left: 0.3, top: 0.45, width: 0.4, height: 0.15 },
-        message: "화면 가운데 '주문하기' 버튼을 누르세요.",
-        done: false,
-      };
-    }
-    return {
-      stage: "메뉴 선택",
-      button: "",
-      where: "",
-      box: null,
-      message: "메뉴를 고르는 화면이에요. 위쪽에 커피, 음료, 디저트 탭이 있어요. 원하는 메뉴를 말해 주시면 안내해 드릴게요.",
-      done: false,
-    };
-  }
   const step = req.history.length;
   const done = step >= 2;
   const button = ["커피", "아이스 아메리카노", "결제하기"][Math.min(step, 2)];
