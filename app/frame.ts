@@ -26,6 +26,33 @@ export function captureFrame(video: HTMLVideoElement): Frame {
   return draw(video, video.videoWidth, video.videoHeight);
 }
 
+// 화면 변화 감지용 축소 흑백 이미지. 매번 AI에 보내지 않고 이것끼리 비교해서 바뀐 장면만 보낸다.
+const SIG_WIDTH = 32;
+const SIG_HEIGHT = 18;
+let sigCanvas: HTMLCanvasElement | undefined;
+
+export function signature(video: HTMLVideoElement): Uint8Array | null {
+  if (video.videoWidth === 0) return null;
+  sigCanvas ??= document.createElement("canvas");
+  sigCanvas.width = SIG_WIDTH;
+  sigCanvas.height = SIG_HEIGHT;
+  const ctx = sigCanvas.getContext("2d", { willReadFrequently: true })!;
+  ctx.drawImage(video, 0, 0, SIG_WIDTH, SIG_HEIGHT);
+  const { data } = ctx.getImageData(0, 0, SIG_WIDTH, SIG_HEIGHT);
+  const gray = new Uint8Array(SIG_WIDTH * SIG_HEIGHT);
+  for (let i = 0; i < gray.length; i++) {
+    gray[i] = (data[i * 4] * 77 + data[i * 4 + 1] * 150 + data[i * 4 + 2] * 29) >> 8;
+  }
+  return gray;
+}
+
+/** 두 축소 이미지의 평균 밝기 차이(0~255). 클수록 많이 달라진 것이다. */
+export function difference(a: Uint8Array, b: Uint8Array): number {
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) sum += Math.abs(a[i] - b[i]);
+  return sum / a.length;
+}
+
 export async function fileToFrame(file: File): Promise<Frame> {
   const bitmap = await createImageBitmap(file);
   try {

@@ -16,7 +16,7 @@ export type GuideRequest = {
   image: string; // base64 JPEG (data URL 접두사 제외)
   width: number;
   height: number;
-  goal: string;
+  goal: string; // 비어 있으면 목표 없이 메뉴를 둘러보는 중
   history: string[];
   lang: Lang;
 };
@@ -51,6 +51,19 @@ export function buildMessages(req: GuideRequest) {
     `stage, button, where, message는 ${answerLang}로 쓴다. button은 화면에 적힌 글자 그대로 쓴다.`,
   ].join("\n");
 
+  if (isBrowsing(req)) {
+    const browse = [
+      system,
+      "지금 사용자는 주문할 메뉴를 정하지 않고 화면을 둘러보는 중이다. 누를 버튼을 고르지 않는다.",
+      "message에는 지금 화면이 어떤 단계인지와 눈에 띄는 메뉴·버튼을 위치와 함께 두세 문장으로 읽어 준다.",
+      "이때 button은 빈 문자열, box는 빈 배열, done은 false로 한다.",
+    ].join("\n");
+    return [
+      { role: "system", content: browse },
+      { role: "user", content: "목표: 없음(둘러보기)\n이 화면에 무엇이 있는지 알려 줘.", images: [req.image] },
+    ];
+  }
+
   const pressed = req.history.length > 0 ? req.history.join(" → ") : "없음";
   const user = `목표: ${req.goal}\n지금까지 누른 버튼: ${pressed}\n이 화면에서 다음에 누를 버튼을 알려 줘.`;
 
@@ -58,6 +71,11 @@ export function buildMessages(req: GuideRequest) {
     { role: "system", content: system },
     { role: "user", content: user, images: [req.image] },
   ];
+}
+
+/** 목표 없이 시작했으면 버튼을 고르지 않고 화면을 읽어 주기만 한다. */
+export function isBrowsing(req: Pick<GuideRequest, "goal">) {
+  return req.goal.trim() === "";
 }
 
 /** 모델 출력(JSON 문자열)을 검증하고 좌표를 비율로 바꾼다. 형식이 틀리면 null. */
