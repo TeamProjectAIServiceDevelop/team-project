@@ -1,0 +1,2 @@
+{"id":"mega-001-1","image":"images/mega-001.png","store":"메가엠지씨커피","source":"photo","goal":"딸기주스 한 잔 주문","history":["음료","스무디&주스"],"answer":{"stage":"메뉴 선택","button":"딸기주스","box":[168,150,250,220]},"note":"스크린샷, 장바구니에 다른 메뉴가 이미 담겨 있음"}
+{"id":"mega-001-2","image":"images/mega-001.png","store":"메가엠지씨커피","source":"photo","goal":"장바구니에 담은 것 결제","history":["음료","스무디&주스","딸기주스"],"answer":{"stage":"결제","button":"결제하기","box":[226,368,312,415]},"note":"스크린샷"}
