@@ -1,0 +1,3 @@
+{"id":"sample-menu-1","image":"images/menu.png","store":"가짜 카페","source":"photo","goal":"아이스 아메리카노 한 잔 포장","history":[],"answer":{"stage":"메뉴 선택","button":"커피","box":[250,540,470,680]}}
+{"id":"sample-menu-2","image":"images/menu.png","store":"가짜 카페","source":"photo","goal":"아이스 아메리카노 한 잔 포장","history":["커피"],"answer":{"stage":"메뉴 선택","button":"아이스 아메리카노","box":[40,760,330,900]}}
+{"id":"sample-cart-1","image":"images/cart.png","store":"가짜 카페","source":"photo","goal":"아이스 아메리카노 한 잔 포장","history":["커피","아이스 아메리카노"],"answer":{"stage":"장바구니","button":"결제하기","box":[420,1120,690,1240]}}

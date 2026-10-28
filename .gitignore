@@ -37,6 +37,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# 평가: 실제 사진과 실행 결과는 올리지 않는다 (labels.jsonl과 시험용 sample은 올린다)
+/eval/data/*/images/
+!/eval/data/sample/images/
+/eval/results/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
