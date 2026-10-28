@@ -2,50 +2,42 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Guide, Lang } from "@/lib/guide";
-import { captureFrame, fileToFrame, type Frame } from "./frame";
+import type { Frame } from "./frame";
 import { useLiveCamera } from "./live-camera";
 import { speak, stopSpeaking, useSpeechRecognition } from "./speech";
 
-// live: 실시간 카메라(기본). camera/thinking/result: 찍기 버튼 방식(실시간이 불안정할 때의 대체).
-type Phase = "goal" | "live" | "camera" | "thinking" | "result";
+// goal: 목표 입력(생략 가능). live: 실시간 카메라로 안내.
+type Phase = "goal" | "live";
 
 const RETRY_MS = 3000; // 실시간 분석이 실패하면 이만큼 쉬었다가 다시 본다
 
 const TEXT = {
   ko: {
     goalTitle: "무엇을 주문하고 싶으세요?",
-    goalHint: "마이크를 누르고 말해 보세요. 그냥 시작하면 메뉴를 둘러볼 수 있어요.",
-    goalPlaceholder: "예: 아이스 아메리카노 한 잔 포장",
+    goalHint: "말하거나 적어도 되고, 그냥 시작하기만 눌러도 화면을 보며 하나씩 안내해 드려요.",
+    goalPlaceholder: "예: 아이스 아메리카노 한 잔 포장 (안 적어도 돼요)",
     micStart: "🎤 말하기",
     micStop: "■ 그만 듣기",
-    micUnsupported: "이 브라우저는 음성 입력을 지원하지 않아요. 글자로 입력하거나 그냥 시작해 메뉴를 둘러보세요.",
-    start: "시작하기",
-    startBrowse: "목표 없이 둘러보기",
+    micUnsupported: "이 브라우저는 음성 입력을 지원하지 않아요. 글자로 적거나 그냥 시작하세요.",
+    start: "▶ 시작하기",
     live: "실시간",
-    livePoint: "키오스크 화면이 테두리 안에 들어오게 비춰 주세요. 찍기 버튼은 누르지 않아도 돼요.",
-    liveBrowse: "둘러볼 키오스크 화면을 비춰 주세요. 화면에 무엇이 있는지 읽어 드릴게요.",
+    livePoint: "키오스크 화면이 테두리 안에 들어오게 비춰 주세요. 화면을 보고 바로 안내해 드려요.",
     liveNext: "버튼을 누르면 바뀐 화면을 자동으로 보고 다음을 알려 드려요.",
-    browseNext: "다른 화면을 비추면 다시 읽어 드려요.",
+    browseNext: "화면이 바뀌면 다음을 알려 드려요. 원하는 메뉴가 있으면 🎤를 눌러 말해 주세요.",
+    listening: "듣고 있어요. 원하는 메뉴를 말해 주세요.",
+    liveMicGoal: "🎤 원하는 메뉴 말하기",
+    liveMicChange: "🎤 목표 바꿔 말하기",
     holdStill: "휴대폰을 잠시 멈춰 주세요.",
-    usePhoto: "찍기 버튼으로 하기",
-    useLive: "실시간으로 하기",
-    pointCamera: "키오스크 화면이 테두리 안에 들어오게 비추고 찍기 버튼을 누르세요.",
-    shoot: "📷 찍기",
-    upload: "사진 고르기",
-    cameraError: "카메라를 열 수 없어요. 사진 고르기를 눌러 주세요.",
+    cameraError: "카메라를 열 수 없어요. 브라우저에서 카메라 권한을 허용한 뒤 다시 시도해 주세요.",
+    retryCamera: "다시 시도",
     thinking: "화면을 보고 있어요. 잠시만 기다려 주세요.",
     pressHere: "여기를 누르세요",
     replay: "🔊 다시 듣기",
-    pressed: "눌렀어요, 다음 화면",
-    retake: "다시 찍기",
-    nextShot: "잘하셨어요. 바뀐 화면을 다시 찍어 주세요.",
     done: "주문 완료!",
     restart: "처음으로",
-    changeGoal: "목표 바꾸기",
-    setGoal: "목표 정하기",
     goal: "목표",
-    browsing: "둘러보기 중",
-    failed: "안내를 받지 못했어요. 다시 찍어 주세요.",
+    browsing: "목표 없이 안내 중",
+    failed: "안내를 받지 못했어요. 잠시 후 다시 볼게요.",
     feedbackAsk: "안내가 맞았나요?",
     feedbackGood: "👍 맞았어요",
     feedbackBad: "👎 틀렸어요",
@@ -53,38 +45,30 @@ const TEXT = {
   },
   en: {
     goalTitle: "What would you like to order?",
-    goalHint: "Tap the mic and speak. Or just start to browse the menu.",
-    goalPlaceholder: "e.g. One iced americano to go",
+    goalHint: "Speak or type it, or just tap Start and I'll guide you step by step from the screen.",
+    goalPlaceholder: "e.g. One iced americano to go (optional)",
     micStart: "🎤 Speak",
     micStop: "■ Stop",
-    micUnsupported: "Voice input isn't supported in this browser. Type instead, or just start to browse.",
-    start: "Start",
-    startBrowse: "Browse without a goal",
+    micUnsupported: "Voice input isn't supported in this browser. Type instead, or just start.",
+    start: "▶ Start",
     live: "LIVE",
-    livePoint: "Fit the kiosk screen inside the frame. No need to tap a shoot button.",
-    liveBrowse: "Point at the kiosk screen to browse. I'll read out what's on it.",
+    livePoint: "Fit the kiosk screen inside the frame. I'll guide you as soon as I see it.",
     liveNext: "After you press it, I'll see the new screen and tell you what's next.",
-    browseNext: "Point at another screen and I'll read it again.",
+    browseNext: "I'll tell you what's next when the screen changes. Tap 🎤 to say what you want.",
+    listening: "Listening. Tell me what you'd like.",
+    liveMicGoal: "🎤 Say what you want",
+    liveMicChange: "🎤 Change goal",
     holdStill: "Please hold your phone still.",
-    usePhoto: "Use the shoot button",
-    useLive: "Use live mode",
-    pointCamera: "Fit the kiosk screen inside the frame and tap the shoot button.",
-    shoot: "📷 Shoot",
-    upload: "Choose photo",
-    cameraError: "Can't open the camera. Tap Choose photo instead.",
+    cameraError: "Can't open the camera. Allow camera access in your browser and try again.",
+    retryCamera: "Try again",
     thinking: "Looking at the screen. One moment, please.",
     pressHere: "Press here",
     replay: "🔊 Replay",
-    pressed: "Done, next screen",
-    retake: "Retake",
-    nextShot: "Well done. Please take a photo of the new screen.",
     done: "Order complete!",
     restart: "Start over",
-    changeGoal: "Change goal",
-    setGoal: "Set a goal",
     goal: "Goal",
-    browsing: "Browsing",
-    failed: "Couldn't get guidance. Please take the photo again.",
+    browsing: "Guiding without a goal",
+    failed: "Couldn't get guidance. I'll look again shortly.",
     feedbackAsk: "Was this right?",
     feedbackGood: "👍 Yes",
     feedbackBad: "👎 No",
@@ -99,19 +83,17 @@ export function KioskGuide() {
   const [phase, setPhase] = useState<Phase>("goal");
   const [goal, setGoal] = useState("");
   const [history, setHistory] = useState<string[]>([]);
-  const [frame, setFrame] = useState<Frame | null>(null);
-  const [guide, setGuide] = useState<Guide | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState(false);
+  const [cameraTry, setCameraTry] = useState(0);
   const [liveGuide, setLiveGuide] = useState<Guide | null>(null);
   const [liveBusy, setLiveBusy] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const lastSpoken = useRef("");
   const mic = useSpeechRecognition(lang);
   const live = useLiveCamera(videoRef, {
-    enabled: phase === "live" && !cameraError && !liveGuide?.done,
+    // 말하는 동안에는 반쯤 말한 목표로 묻지 않도록 분석을 멈춘다.
+    enabled: phase === "live" && !cameraError && !liveGuide?.done && !mic.listening,
     busy: liveBusy,
     onScene: askLive,
   });
@@ -127,8 +109,8 @@ export function KioskGuide() {
     say(text);
   }
 
-  // 카메라 단계(실시간, 찍기)에서만 후면 카메라를 켜고, 벗어나면 끈다.
-  const cameraOn = phase === "live" || phase === "camera";
+  // 실시간 단계에서만 후면 카메라를 켜고, 벗어나면 끈다.
+  const cameraOn = phase === "live";
   useEffect(() => {
     if (!cameraOn) return;
     let stream: MediaStream | undefined;
@@ -151,7 +133,7 @@ export function KioskGuide() {
       cancelled = true;
       stream?.getTracks().forEach((track) => track.stop());
     };
-  }, [cameraOn]);
+  }, [cameraOn, cameraTry]);
 
   async function requestGuide(next: Frame, sentHistory: string[]): Promise<Guide> {
     const res = await fetch("/api/guide", {
@@ -180,7 +162,12 @@ export function KioskGuide() {
     lastSpoken.current = "";
     live.rescan();
     setPhase("live");
-    sayOnce(browsing ? t.liveBrowse : t.livePoint);
+    sayOnce(t.livePoint);
+  }
+
+  function retryCamera() {
+    setCameraError(false);
+    setCameraTry((n) => n + 1);
   }
 
   async function askLive(scene: Frame) {
@@ -208,17 +195,11 @@ export function KioskGuide() {
   }
 
   function liveStatus() {
+    if (mic.listening) return t.listening;
     if (live.moving) return t.holdStill;
     if (liveBusy) return t.thinking;
-    if (!liveGuide) return browsing ? t.liveBrowse : t.livePoint;
+    if (!liveGuide) return t.livePoint;
     return browsing ? t.browseNext : t.liveNext;
-  }
-
-  function goToCamera(announcement: string) {
-    setCameraError(false);
-    setGuide(null);
-    setPhase("camera");
-    say(announcement);
   }
 
   function toggleMic() {
@@ -229,49 +210,24 @@ export function KioskGuide() {
     mic.start(setGoal);
   }
 
-  async function ask(next: Frame) {
-    setFrame(next);
-    setError(null);
-    setPhase("thinking");
-    say(t.thinking);
-    try {
-      const data = await requestGuide(next, history);
-      setGuide(data);
-      setPhase("result");
-      say(data.message);
-    } catch (e) {
-      const message = e instanceof Error && e.message ? e.message : t.failed;
-      setError(message);
-      setCameraError(false);
-      setPhase("camera");
-      say(message);
+  // 실시간 안내 중에 목표를 말하면, 말이 끝난 뒤 같은 화면을 새 목표로 다시 본다.
+  function toggleLiveMic() {
+    if (mic.listening) {
+      mic.stop();
+      return;
     }
-  }
-
-  function shoot() {
-    const video = videoRef.current;
-    if (!video || video.videoWidth === 0) return;
-    void ask(captureFrame(video));
-  }
-
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (file) void ask(await fileToFrame(file));
-  }
-
-  function pressed() {
-    if (guide?.button) setHistory((h) => [...h, guide.button]);
-    goToCamera(t.nextShot);
+    mic.start(setGoal, () => {
+      setLiveGuide(null);
+      lastSpoken.current = "";
+      live.rescan();
+    });
   }
 
   function restart() {
     stopSpeaking();
+    mic.stop();
     setGoal("");
     setHistory([]);
-    setFrame(null);
-    setGuide(null);
-    setError(null);
     setLiveGuide(null);
     setLiveError(null);
     setLiveBusy(false);
@@ -297,7 +253,7 @@ export function KioskGuide() {
         </div>
       </header>
 
-      {phase !== "goal" && (
+      {phase === "live" && (
         <div className="flex items-center justify-between gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-lg dark:bg-zinc-900">
           <span>
             {browsing ? (
@@ -310,7 +266,7 @@ export function KioskGuide() {
             )}
           </span>
           <button type="button" onClick={restart} className="shrink-0 text-base underline">
-            {browsing ? t.setGoal : t.changeGoal}
+            {t.restart}
           </button>
         </div>
       )}
@@ -333,7 +289,7 @@ export function KioskGuide() {
             <button
               type="button"
               onClick={toggleMic}
-              className={`h-20 rounded-2xl text-2xl font-bold text-white ${
+              className={`h-16 rounded-2xl text-2xl font-bold text-white ${
                 mic.listening ? "animate-pulse bg-red-600" : "bg-blue-600"
               }`}
             >
@@ -343,9 +299,9 @@ export function KioskGuide() {
           <button
             type="button"
             onClick={startLive}
-            className="h-16 rounded-2xl bg-foreground text-2xl font-bold text-background"
+            className="h-20 rounded-2xl bg-foreground text-3xl font-bold text-background"
           >
-            {browsing ? t.startBrowse : t.start}
+            {t.start}
           </button>
         </section>
       )}
@@ -362,10 +318,10 @@ export function KioskGuide() {
               <p className="text-lg">{t.cameraError}</p>
               <button
                 type="button"
-                onClick={() => fileRef.current?.click()}
-                className="h-20 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
+                onClick={retryCamera}
+                className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
               >
-                {t.upload}
+                {t.retryCamera}
               </button>
             </>
           ) : (
@@ -405,7 +361,7 @@ export function KioskGuide() {
               >
                 {t.replay}
               </button>
-              <Feedback key={liveGuide.message} guide={liveGuide} goal={goal} mode="live" lang={lang} t={t} />
+              <Feedback key={liveGuide.message} guide={liveGuide} goal={goal} lang={lang} t={t} />
             </>
           )}
 
@@ -418,119 +374,18 @@ export function KioskGuide() {
               {t.restart}
             </button>
           ) : (
-            !cameraError && (
-              <button type="button" onClick={() => goToCamera(t.pointCamera)} className="text-lg underline">
-                {t.usePhoto}
+            !cameraError &&
+            mic.supported && (
+              <button
+                type="button"
+                onClick={toggleLiveMic}
+                className={`h-16 rounded-2xl text-xl font-bold text-white ${
+                  mic.listening ? "animate-pulse bg-red-600" : "bg-blue-600"
+                }`}
+              >
+                {mic.listening ? t.micStop : browsing ? t.liveMicGoal : t.liveMicChange}
               </button>
             )
-          )}
-        </section>
-      )}
-
-      {phase === "camera" && (
-        <section className="flex flex-col gap-4">
-          {error && (
-            <p role="alert" className="rounded-xl bg-red-100 p-4 text-lg text-red-800 dark:bg-red-950 dark:text-red-200">
-              {error}
-            </p>
-          )}
-          <p className="text-lg">{cameraError ? t.cameraError : t.pointCamera}</p>
-          {!cameraError && (
-            <div className="relative overflow-hidden rounded-2xl bg-black">
-              <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
-              <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
-            </div>
-          )}
-          <div className="flex gap-3">
-            {!cameraError && (
-              <button
-                type="button"
-                onClick={shoot}
-                className="h-20 flex-1 rounded-2xl bg-blue-600 text-2xl font-bold text-white"
-              >
-                {t.shoot}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className={`h-20 rounded-2xl border-2 border-zinc-300 px-4 text-lg font-bold dark:border-zinc-700 ${
-                cameraError ? "flex-1" : ""
-              }`}
-            >
-              {t.upload}
-            </button>
-          </div>
-          {!cameraError && (
-            <button type="button" onClick={startLive} className="text-lg underline">
-              {t.useLive}
-            </button>
-          )}
-        </section>
-      )}
-
-      <input ref={fileRef} type="file" accept="image/*" capture="environment" hidden onChange={onFile} />
-
-      {(phase === "thinking" || phase === "result") && frame && (
-        <section className="flex flex-col gap-4">
-          <div className="relative overflow-hidden rounded-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element -- 방금 찍은 data URL 사진이라 next/image 최적화 대상이 아니다 */}
-            <img src={frame.dataUrl} alt="찍은 키오스크 화면" className="block w-full" />
-            {phase === "thinking" && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-2xl font-bold text-white">
-                <span className="animate-pulse">{t.thinking}</span>
-              </div>
-            )}
-            {phase === "result" && guide?.box && <PressHere box={guide.box} label={t.pressHere} />}
-          </div>
-
-          {phase === "result" && guide && (
-            <>
-              {guide.done && <p className="text-center text-3xl font-bold text-green-600">{t.done}</p>}
-              <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
-                {guide.message}
-              </p>
-              {guide.stage && (
-                <p className="text-base text-zinc-500">
-                  {guide.stage}
-                  {history.length > 0 && ` · ${history.join(" → ")}`}
-                </p>
-              )}
-              <button
-                type="button"
-                onClick={() => say(guide.message)}
-                className="h-14 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
-              >
-                {t.replay}
-              </button>
-              <Feedback key={guide.message} guide={guide} goal={goal} mode="photo" lang={lang} t={t} />
-              {guide.done ? (
-                <button
-                  type="button"
-                  onClick={restart}
-                  className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
-                >
-                  {t.restart}
-                </button>
-              ) : (
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={pressed}
-                    className="h-20 flex-[2] rounded-2xl bg-blue-600 text-xl font-bold text-white"
-                  >
-                    {t.pressed}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => goToCamera(t.pointCamera)}
-                    className="h-20 flex-1 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
-                  >
-                    {t.retake}
-                  </button>
-                </div>
-              )}
-            </>
           )}
         </section>
       )}
@@ -539,19 +394,7 @@ export function KioskGuide() {
 }
 
 /** 안내가 맞았는지 묻고 저장한다. 저장이 안 돼도 사용자에게는 고맙다고만 한다. */
-function Feedback({
-  guide,
-  goal,
-  mode,
-  lang,
-  t,
-}: {
-  guide: Guide;
-  goal: string;
-  mode: "live" | "photo";
-  lang: Lang;
-  t: Text;
-}) {
+function Feedback({ guide, goal, lang, t }: { guide: Guide; goal: string; lang: Lang; t: Text }) {
   const [sent, setSent] = useState(false);
 
   function send(correct: boolean) {
@@ -565,7 +408,7 @@ function Feedback({
         button: guide.button,
         message: guide.message,
         correct,
-        mode,
+        mode: "live",
         lang,
       }),
     }).catch(() => {});
@@ -593,7 +436,7 @@ function Feedback({
   );
 }
 
-/** 사진·영상 위에 눌러야 할 버튼을 빨간 상자로 표시한다. 좌표가 비율이라 크기가 바뀌어도 맞는다. */
+/** 영상 위에 눌러야 할 버튼을 빨간 상자로 표시한다. 좌표가 비율이라 크기가 바뀌어도 맞는다. */
 function PressHere({ box, label }: { box: NonNullable<Guide["box"]>; label: string }) {
   const labelBelow = box.top < 0.12;
   return (

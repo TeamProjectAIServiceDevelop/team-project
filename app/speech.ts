@@ -39,7 +39,7 @@ export function useSpeechRecognition(lang: Lang) {
   const [listening, setListening] = useState(false);
   const recognition = useRef<Recognition | null>(null);
 
-  function start(onText: (text: string) => void, onError?: (error: string) => void) {
+  function start(onText: (text: string) => void, onEnd?: () => void) {
     const Ctor = getRecognitionCtor();
     if (!Ctor) return;
     stopSpeaking();
@@ -51,8 +51,10 @@ export function useSpeechRecognition(lang: Lang) {
     r.onresult = (e) => {
       onText(Array.from(e.results, (result) => result[0].transcript).join(""));
     };
-    r.onerror = (e) => onError?.(e.error);
-    r.onend = () => setListening(false);
+    r.onend = () => {
+      setListening(false);
+      onEnd?.();
+    };
     recognition.current = r;
     r.start();
     setListening(true);

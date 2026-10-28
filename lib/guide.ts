@@ -16,7 +16,7 @@ export type GuideRequest = {
   image: string; // base64 JPEG (data URL 접두사 제외)
   width: number;
   height: number;
-  goal: string; // 비어 있으면 목표 없이 메뉴를 둘러보는 중
+  goal: string; // 비어 있으면 목표 없이 시작한 것. 화면을 보고 단계별로 안내한다
   history: string[];
   lang: Lang;
 };
@@ -51,20 +51,26 @@ export function buildMessages(req: GuideRequest) {
     `stage, button, where, message는 ${answerLang}로 쓴다. button은 화면에 적힌 글자 그대로 쓴다.`,
   ].join("\n");
 
+  const pressed = req.history.length > 0 ? req.history.join(" → ") : "없음";
+
   if (isBrowsing(req)) {
     const browse = [
       system,
-      "지금 사용자는 주문할 메뉴를 정하지 않고 화면을 둘러보는 중이다. 누를 버튼을 고르지 않는다.",
-      "message에는 지금 화면이 어떤 단계인지와 눈에 띄는 메뉴·버튼을 위치와 함께 두세 문장으로 읽어 준다.",
-      "이때 button은 빈 문자열, box는 빈 배열, done은 false로 한다.",
+      "지금 사용자는 무엇을 주문할지 정하지 않고 시작했다. 화면을 보고 지금 단계에서 할 일을 안내한다.",
+      "처음 화면의 '주문하기', 매장/포장 선택처럼 다음 단계로 넘어가는 버튼이 분명하면 그 버튼 하나를 골라 box를 채운다.",
+      "메뉴처럼 사용자가 직접 골라야 하는 화면이면 눈에 띄는 선택지를 위치와 함께 두세 개 읽어 주고, 원하는 것을 말해 주면 안내하겠다고 덧붙인다. 이때 button은 빈 문자열, box는 빈 배열로 한다.",
     ].join("\n");
     return [
       { role: "system", content: browse },
-      { role: "user", content: "목표: 없음(둘러보기)\n이 화면에 무엇이 있는지 알려 줘.", images: [req.image] },
+      {
+        role: "user",
+        content: `목표: 아직 없음\n지금까지 누른 버튼: ${pressed}\n이 화면에서 무엇을 하면 되는지 알려 줘.`,
+        images: [req.image],
+      },
     ];
   }
 
-  const pressed = req.history.length > 0 ? req.history.join(" → ") : "없음";
+
   const user = `목표: ${req.goal}\n지금까지 누른 버튼: ${pressed}\n이 화면에서 다음에 누를 버튼을 알려 줘.`;
 
   return [
@@ -73,7 +79,7 @@ export function buildMessages(req: GuideRequest) {
   ];
 }
 
-/** 목표 없이 시작했으면 버튼을 고르지 않고 화면을 읽어 주기만 한다. */
+/** 목표 없이 시작했으면 다음 단계 버튼을 안내하고, 골라야 하는 화면에서는 선택지를 읽어 준다. */
 export function isBrowsing(req: Pick<GuideRequest, "goal">) {
   return req.goal.trim() === "";
 }

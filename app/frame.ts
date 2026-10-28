@@ -52,12 +52,3 @@ export function difference(a: Uint8Array, b: Uint8Array): number {
   for (let i = 0; i < a.length; i++) sum += Math.abs(a[i] - b[i]);
   return sum / a.length;
 }
-
-export async function fileToFrame(file: File): Promise<Frame> {
-  const bitmap = await createImageBitmap(file);
-  try {
-    return draw(bitmap, bitmap.width, bitmap.height);
-  } finally {
-    bitmap.close();
-  }
-}
