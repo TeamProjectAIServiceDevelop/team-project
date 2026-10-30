@@ -1,7 +1,6 @@
 import { buildMessages, guideSchema, parseGuide, type Guide, type GuideRequest } from "@/lib/guide";
+import { AiError, chat } from "@/lib/ollama";
 
-const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "qwen2.5vl:7b";
 const MOCK = process.env.KIOSK_AI_MOCK === "1";
 
 export async function POST(request: Request) {
@@ -10,31 +9,17 @@ export async function POST(request: Request) {
 
   if (MOCK) return Response.json(mockGuide(req));
 
-  let res: Response;
+  let content: string;
   try {
-    res = await fetch(`${OLLAMA_URL}/api/chat`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        stream: false,
-        format: guideSchema,
-        options: { temperature: 0 },
-        messages: buildMessages(req),
-      }),
-      signal: AbortSignal.timeout(90_000),
-    });
-  } catch {
-    return Response.json({ error: "AI 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요." }, { status: 503 });
-  }
-  if (!res.ok) {
-    return Response.json({ error: `AI 서버 오류 (${res.status})` }, { status: 502 });
+    content = await chat(buildMessages(req), guideSchema);
+  } catch (e) {
+    if (e instanceof AiError) return Response.json({ error: e.message }, { status: e.status });
+    throw e;
   }
 
-  const data = (await res.json()) as { message?: { content?: string } };
-  const guide = parseGuide(data.message?.content ?? "", req.width, req.height);
+  const guide = parseGuide(content, req.width, req.height);
   if (!guide) {
-    return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 찍어 주세요." }, { status: 502 });
+    return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 비춰 주세요." }, { status: 502 });
   }
   return Response.json(guide);
 }

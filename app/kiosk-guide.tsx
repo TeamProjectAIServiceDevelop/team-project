@@ -1,20 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Guide, Lang } from "@/lib/guide";
-import type { Frame } from "./frame";
+import type { Guide, Lang, Menu, MenuItem } from "@/lib/guide";
+import { captureFrame, type Frame } from "./frame";
 import { useLiveCamera } from "./live-camera";
 import { speak, stopSpeaking, useSpeechRecognition } from "./speech";
 
-// goal: 목표 입력(필수). live: 실시간 카메라로 목표에 맞게 안내.
-type Phase = "goal" | "live";
+// goal: 목표 입력(필수). menu: 메뉴 화면을 찍어 목표 고르기. live: 실시간 카메라로 목표에 맞게 안내.
+type Phase = "goal" | "menu" | "live";
 
 const RETRY_MS = 3000; // 실시간 분석이 실패하면 이만큼 쉬었다가 다시 본다
 
 const TEXT = {
   ko: {
     goalTitle: "무엇을 주문하고 싶으세요?",
-    goalHint: "마이크를 누르고 말하거나 글자로 적은 뒤 시작하기를 누르세요.",
+    goalHint: "마이크를 누르고 말하거나, 글자로 적거나, 메뉴 화면을 찍어서 고른 뒤 시작하기를 누르세요.",
+    menuOpen: "📷 메뉴 찍어서 고르기",
+    menuPoint: "키오스크 메뉴 화면이 테두리 안에 들어오게 비추고 찍기를 누르세요.",
+    shoot: "📷 찍기",
+    menuReading: "메뉴를 읽고 있어요. 잠시만 기다려 주세요.",
+    menuRetake: "다시 찍기",
+    menuBack: "돌아가기",
+    menuChosen: "목표로 정했어요. 필요하면 포장이나 수량을 덧붙이고 시작하기를 누르세요.",
+    menuFailed: "메뉴를 읽지 못했어요. 다시 찍어 주세요.",
     goalPlaceholder: "예: 아이스 아메리카노 한 잔 포장",
     goalNeeded: "먼저 주문할 메뉴를 말하거나 적어 주세요.",
     micStart: "🎤 말하기",
@@ -43,7 +51,15 @@ const TEXT = {
   },
   en: {
     goalTitle: "What would you like to order?",
-    goalHint: "Tap the mic and speak, or type it, then tap Start.",
+    goalHint: "Speak, type, or take a photo of the menu screen to choose, then tap Start.",
+    menuOpen: "📷 Choose from a menu photo",
+    menuPoint: "Fit the kiosk menu screen inside the frame and tap Shoot.",
+    shoot: "📷 Shoot",
+    menuReading: "Reading the menu. One moment, please.",
+    menuRetake: "Retake",
+    menuBack: "Back",
+    menuChosen: "set as your goal. Add details like to-go or quantity if needed, then tap Start.",
+    menuFailed: "Couldn't read the menu. Please take the photo again.",
     goalPlaceholder: "e.g. One iced americano to go",
     goalNeeded: "First say or type what you'd like to order.",
     micStart: "🎤 Speak",
@@ -84,6 +100,9 @@ export function KioskGuide() {
   const [liveGuide, setLiveGuide] = useState<Guide | null>(null);
   const [liveBusy, setLiveBusy] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
+  const [menu, setMenu] = useState<Menu | null>(null);
+  const [menuBusy, setMenuBusy] = useState(false);
+  const [menuError, setMenuError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastSpoken = useRef("");
   const mic = useSpeechRecognition(lang);
@@ -105,8 +124,8 @@ export function KioskGuide() {
     say(text);
   }
 
-  // 실시간 단계에서만 후면 카메라를 켜고, 벗어나면 끈다.
-  const cameraOn = phase === "live";
+  // 실시간 안내와 메뉴 찍기 단계에서만 후면 카메라를 켜고, 벗어나면 끈다.
+  const cameraOn = phase === "live" || (phase === "menu" && !menu);
   useEffect(() => {
     if (!cameraOn) return;
     let stream: MediaStream | undefined;
@@ -159,6 +178,61 @@ export function KioskGuide() {
     live.rescan();
     setPhase("live");
     sayOnce(t.livePoint);
+  }
+
+  function openMenu() {
+    mic.stop();
+    setCameraError(false);
+    setMenu(null);
+    setMenuError(null);
+    setPhase("menu");
+    say(t.menuPoint);
+  }
+
+  async function shootMenu() {
+    const video = videoRef.current;
+    if (!video || video.videoWidth === 0 || menuBusy) return;
+    const shot = captureFrame(video);
+    setMenuBusy(true);
+    setMenuError(null);
+    say(t.menuReading);
+    try {
+      const res = await fetch("/api/menu", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ image: shot.base64, lang }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? t.menuFailed);
+      const read = data as Menu;
+      if (read.items.length === 0) {
+        setMenuError(read.message);
+        say(read.message);
+        return;
+      }
+      setMenu(read);
+      say(read.message);
+    } catch (e) {
+      const message = e instanceof Error && e.message ? e.message : t.menuFailed;
+      setMenuError(message);
+      say(message);
+    } finally {
+      setMenuBusy(false);
+    }
+  }
+
+  // 메뉴를 고르지 않고 돌아가면 먼저 적어 둔 목표는 그대로 둔다.
+  function closeMenu() {
+    setMenu(null);
+    setMenuError(null);
+    setPhase("goal");
+  }
+
+  function pickMenu(item: MenuItem) {
+    setGoal(item.name);
+    setMenu(null);
+    setPhase("goal");
+    say(`${item.name}, ${t.menuChosen}`);
   }
 
   function retryCamera() {
@@ -231,6 +305,8 @@ export function KioskGuide() {
     setLiveGuide(null);
     setLiveError(null);
     setLiveBusy(false);
+    setMenu(null);
+    setMenuError(null);
     lastSpoken.current = "";
     setPhase("goal");
   }
@@ -292,6 +368,13 @@ export function KioskGuide() {
           )}
           <button
             type="button"
+            onClick={openMenu}
+            className="h-16 rounded-2xl border-2 border-zinc-300 text-2xl font-bold dark:border-zinc-700"
+          >
+            {t.menuOpen}
+          </button>
+          <button
+            type="button"
             onClick={startLive}
             disabled={!hasGoal}
             className="h-20 rounded-2xl bg-foreground text-3xl font-bold text-background disabled:opacity-30"
@@ -299,6 +382,81 @@ export function KioskGuide() {
             {t.start}
           </button>
           {!hasGoal && <p className="text-center text-lg text-zinc-500">{t.goalNeeded}</p>}
+        </section>
+      )}
+
+      {phase === "menu" && (
+        <section className="flex flex-col gap-4">
+          {menuError && (
+            <p role="alert" className="rounded-xl bg-red-100 p-4 text-lg text-red-800 dark:bg-red-950 dark:text-red-200">
+              {menuError}
+            </p>
+          )}
+          {menu ? (
+            <>
+              <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
+                {menu.message}
+              </p>
+              <ul className="flex flex-col gap-3">
+                {menu.items.map((item, i) => (
+                  <li key={`${i}-${item.name}`}>
+                    <button
+                      type="button"
+                      onClick={() => pickMenu(item)}
+                      className="flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border-2 border-zinc-300 px-5 py-3 text-left text-2xl font-bold dark:border-zinc-700"
+                    >
+                      <span>{item.name}</span>
+                      {item.price && <span className="shrink-0 text-xl text-zinc-500">{item.price}</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={openMenu}
+                className="h-14 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
+              >
+                {t.menuRetake}
+              </button>
+            </>
+          ) : cameraError ? (
+            <>
+              <p className="text-lg">{t.cameraError}</p>
+              <button
+                type="button"
+                onClick={retryCamera}
+                className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
+              >
+                {t.retryCamera}
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-lg" aria-live="polite">
+                {menuBusy ? t.menuReading : t.menuPoint}
+              </p>
+              <div className="relative overflow-hidden rounded-2xl bg-black">
+                <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
+                <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
+                {menuBusy && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-2xl font-bold text-white">
+                    <span className="animate-pulse">{t.menuReading}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={shootMenu}
+                disabled={menuBusy}
+                className="h-20 rounded-2xl bg-blue-600 text-2xl font-bold text-white disabled:opacity-50"
+              >
+                {t.shoot}
+              </button>
+            </>
+          )}
+          <button type="button" onClick={closeMenu} className="text-lg underline">
+            {t.menuBack}
+          </button>
         </section>
       )}
 
