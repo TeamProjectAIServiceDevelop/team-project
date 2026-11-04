@@ -10,7 +10,7 @@
 
 | 항목 | 기존 (Qwen) | Claude 버전 |
 | --- | --- | --- |
-| AI 모델 | Qwen2.5-VL 7B/3B (Ollama) | Claude Opus 5.5 (`claude-opus-5-5`) 기본, 측정용으로 Sonnet 5.5·Haiku 5.5 비교 |
+| AI 모델 | Qwen2.5-VL 3B (Ollama) | Claude Opus 5.5 (`claude-opus-5-5`) 기본, 측정용으로 Sonnet 5.5·Haiku 5.5 비교 |
 | AI 서버 | 팀원 PC의 GPU + Cloudflare Tunnel | 필요 없음. Vercel 서버 함수에서 Anthropic API를 바로 호출 |
 | 호출 코드 | `lib/ollama.ts` (`fetch`로 `/api/chat`) | `lib/claude.ts` (공식 SDK `@anthropic-ai/sdk`) |
 | 출력 형식 강제 | Ollama `format` | 구조화 출력 `output_config.format` (JSON 스키마) |
@@ -114,7 +114,7 @@ Claude는 긴 변이 너무 큰 사진을 내부에서 줄여서 본다. 그러�
 | A3 | 확신도 `confidence: "high" \| "medium" \| "low"` 추가 | 스키마·파서·목업 응답에 반영 | 같음 |
 | A4 | 평가 데이터 라벨링 형식 + 예시 10장으로 좌표 정합 확인 | 형식 문서 + 상자가 버튼에 겹치는 예시 10장 | 좌표 확인 추가 |
 | A5 | 평가 스크립트: 버튼 안내 정확도, 위치 정확도, 응답 시간, **호출당 토큰·비용** | 데이터 폴더를 넣으면 표로 출력 | 비용 열 추가 |
-| A6 | 1차 측정: **Opus 5.5 / Sonnet 5.5 / Haiku 5.5** (+ effort `low`·`medium`) 비교, 시연 모델 결정 | 12주 평가 자료용 표 | Qwen 7B·3B 대신 |
+| A6 | 1차 측정: **Opus 5.5 / Sonnet 5.5 / Haiku 5.5** (+ effort `low`·`medium`) 비교, 시연 모델 결정 | 12주 평가 자료용 표 | Qwen 3B 대신 |
 
 **정윤서 · 웹 (`feat/web`)** — W1~W10은 그대로. 바뀌는 것만:
 
@@ -168,7 +168,7 @@ npm run dev                    # AI 없이 화면만 볼 때: KIOSK_AI_MOCK=1
 | --- | --- | --- |
 | 프롬프트 개선 | 2단계 질의, few-shot, 이미지 보정 | 같음. Claude는 긴 지시와 예시 사진을 잘 따르므로 few-shot 예시 사진을 시스템 프롬프트에 넣고 **프롬프트 캐싱**으로 반복 비용을 줄인다. |
 | LoRA 파인튜닝 | 수집 데이터로 학습 | **하지 않는다.** 대신 실패 사례를 few-shot 예시와 프롬프트 규칙으로 되돌리는 방식으로 개선하고, 개선 전후를 같은 평가 데이터로 비교한다. |
-| 모델 비교 실험 | Qwen 7B·3B, 상용 API | Claude 세 모델 × effort 단계 비교. 필요하면 기존 Qwen 경로(`AI_PROVIDER=ollama`)도 같은 표에 넣어 "로컬 모델 vs Claude"를 보여 준다. |
+| 모델 비교 실험 | Qwen 3B, 상용 API | Claude 세 모델 × effort 단계 비교. 필요하면 기존 Qwen 경로(`AI_PROVIDER=ollama`)도 같은 표에 넣어 "로컬 모델 vs Claude"를 보여 준다. |
 | OCR 결합 | 위치 정확도가 낮을 때 시도 | 같음 |
 | 같은 화면 캐시 | 호출 수 5~10회로 | 같음. 비용과 직접 이어지므로 우선순위를 올린다. |
 | 다국어 안내 | 영어부터 | Claude는 다국어 출력이 자연스러워 영어·중국어·일본어를 함께 진행할 수 있다. 프롬프트의 `answerLang`만 늘린다. |
