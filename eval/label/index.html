@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>라벨링 도구</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f6f6f4; --panel: #fff; --line: #d8d8d2; --text: #1d1d1b; --muted: #6b6b66; --accent: #d9480f; --ok: #2b8a3e; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --panel: #222221; --line: #3a3a37; --text: #ecece8; --muted: #9a9a94; --accent: #ff8a5c; --ok: #69db7c; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, "Malgun Gothic", sans-serif; }
+  header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 15px; margin: 0; }
+  header .grow { flex: 1; }
+  main { display: grid; grid-template-columns: minmax(300px, 1fr) 380px; gap: 16px; padding: 16px; align-items: start; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+  #canvas { display: block; max-width: 100%; margin: 0 auto; cursor: crosshair; touch-action: none; border-radius: 4px; }
+  .hint { color: var(--muted); font-size: 12px; margin: 6px 2px 0; }
+  form, .list { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 8px 0 2px; }
+  input, select, textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); font: inherit; }
+  .row { display: flex; gap: 8px; } .row > * { flex: 1; }
+  button { padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button.small { padding: 2px 8px; font-size: 12px; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .box-info { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .box-info.set { color: var(--ok); }
+  #msg { min-height: 20px; margin-top: 8px; font-size: 13px; }
+  #msg.err { color: #e03131; } #msg.ok { color: var(--ok); }
+  .list { margin-top: 12px; }
+  .list h2 { font-size: 13px; margin: 0 0 6px; }
+  .item { display: flex; gap: 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12px; }
+  .item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .empty { color: var(--muted); font-size: 12px; }
+  kbd { border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: 11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>라벨링 도구 <span id="dataName" class="hint"></span></h1>
+  <button id="prev">← 이전</button>
+  <select id="jump" style="width:auto;max-width:240px"></select>
+  <button id="next">다음 →</button>
+  <span class="grow"></span>
+  <span id="progress" class="hint"></span>
+</header>
+<main>
+  <section>
+    <div class="stage">
+      <canvas id="canvas"></canvas>
+      <p class="hint">정답 버튼을 마우스로 드래그해서 네모를 그리세요. 다시 드래그하면 새로 그립니다. 초록 네모는 이미 저장한 정답입니다.</p>
+    </div>
+  </section>
+  <section>
+    <form id="form" autocomplete="off">
+      <div class="row">
+        <div><label for="store">매장 이름 *</label><input id="store" required></div>
+        <div><label for="source">출처 *</label><select id="source"><option value="photo">photo (사진)</option><option value="video">video (영상 장면)</option></select></div>
+      </div>
+      <label for="goal">목표 * (사용자가 말한 주문)</label>
+      <input id="goal" list="goals" placeholder="예: 아이스 아메리카노 한 잔 포장" required>
+      <datalist id="goals"></datalist>
+      <label for="button">정답 버튼 이름 * (화면에 적힌 글자 그대로)</label>
+      <input id="button" required>
+      <div class="row">
+        <div><label for="aliases">다른 이름 (쉼표로 구분)</label><input id="aliases" placeholder="예: 아메리카노"></div>
+        <div><label for="stage">화면 단계</label>
+          <select id="stage"><option value="">(선택 안 함)</option><option>처음 화면</option><option>메뉴 선택</option><option>옵션 선택</option><option>장바구니</option><option>결제</option><option>완료</option></select></div>
+      </div>
+      <label for="history">지금까지 누른 버튼 (쉼표로 구분, 첫 화면이면 비움)</label>
+      <div class="row"><input id="history" placeholder="예: 커피, (ICE)아메리카노"><button type="button" id="addHistory" class="small" style="flex:0 0 auto" title="방금 저장한 정답 버튼을 history 끝에 추가">+ 방금 정답</button></div>
+      <label for="note">메모 (반사, 흐림, 손 가림 등)</label>
+      <input id="note">
+      <p id="boxInfo" class="box-info">정답 상자: 아직 안 그렸어요</p>
+      <div class="actions">
+        <button class="primary" type="submit">저장하고 계속 <kbd>Ctrl</kbd>+<kbd>Enter</kbd></button>
+        <button type="button" id="clearBox">상자 지우기</button>
+      </div>
+      <p id="msg"></p>
+    </form>
+    <div class="list"><h2>이 사진의 정답</h2><div id="items"></div></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const canvas = $("canvas"), ctx = canvas.getContext("2d");
+let images = [], labels = [], idx = 0, img = null, box = null, drag = null, lastAnswer = "";
+
+const remember = (k, v) => { try { localStorage.setItem("label." + k, v); } catch {} };
+const recall = (k) => { try { return localStorage.getItem("label." + k) ?? ""; } catch { return ""; } };
+
+function say(text, kind = "") { const m = $("msg"); m.textContent = text; m.className = kind; }
+function currentName() { return images[idx]; }
+function labelsOfCurrent() { return labels.filter((l) => l.image === "images/" + currentName()); }
+
+async function load() {
+  const r = await fetch("/api/state"); const s = await r.json();
+  images = s.images; labels = s.labels; $("dataName").textContent = s.dataName;
+  if (images.length === 0) { say("images 폴더에 사진이 없어요.", "err"); return; }
+  const firstOpen = images.findIndex((n) => !labels.some((l) => l.image === "images/" + n));
+  idx = firstOpen === -1 ? 0 : firstOpen;
+  $("store").value = recall("store"); $("source").value = recall("source") || "photo";
+  renderJump(); show();
+}
+
+function renderJump() {
+  $("jump").innerHTML = images.map((n, i) => `<option value="${i}">${labels.some((l) => l.image === "images/" + n) ? "✓ " : "· "}${n}</option>`).join("");
+  $("jump").value = idx;
+  const done = images.filter((n) => labels.some((l) => l.image === "images/" + n)).length;
+  $("progress").textContent = `${done}/${images.length}장 완료 · 문항 ${labels.length}개`;
+}
+
+function show() {
+  box = null; drag = null; updateBoxInfo(); $("jump").value = idx; say("");
+  img = new Image();
+  img.onload = () => { fit(); draw(); renderItems(); };
+  img.src = "/img/" + encodeURIComponent(currentName());
+}
+
+// 브라우저는 EXIF 회전을 반영해 그려 주고 naturalWidth/Height도 똑바로 선 방향이다. run-eval.mjs의 rotate()와 같은 기준이다.
+function fit() {
+  const maxW = Math.min(canvas.parentElement.clientWidth - 20, 720), maxH = window.innerHeight - 140;
+  const s = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1.5);
+  canvas.width = Math.round(img.naturalWidth * s); canvas.height = Math.round(img.naturalHeight * s);
+}
+const scale = () => img.naturalWidth / canvas.width;
+
+function rectPath(b, color, label) {
+  const s = 1 / scale();
+  ctx.lineWidth = 2; ctx.strokeStyle = color; ctx.strokeRect(b[0] * s, b[1] * s, (b[2] - b[0]) * s, (b[3] - b[1]) * s);
+  if (label) { ctx.font = "bold 12px sans-serif"; const w = ctx.measureText(label).width + 6; ctx.fillStyle = color; ctx.fillRect(b[0] * s, Math.max(0, b[1] * s - 16), w, 16); ctx.fillStyle = "#fff"; ctx.fillText(label, b[0] * s + 3, Math.max(12, b[1] * s - 4)); }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  for (const l of labelsOfCurrent()) rectPath(l.answer.box, "#2b8a3e", l.answer.button);
+  if (box) rectPath(box, "#e03131", "새 정답");
+}
+
+function pos(e) {
+  const r = canvas.getBoundingClientRect();
+  return [Math.min(Math.max((e.clientX - r.left) * (canvas.width / r.width), 0), canvas.width), Math.min(Math.max((e.clientY - r.top) * (canvas.height / r.height), 0), canvas.height)];
+}
+canvas.addEventListener("pointerdown", (e) => { canvas.setPointerCapture(e.pointerId); drag = pos(e); });
+canvas.addEventListener("pointermove", (e) => { if (!drag) return; const p = pos(e), k = scale(); box = [Math.min(drag[0], p[0]) * k, Math.min(drag[1], p[1]) * k, Math.max(drag[0], p[0]) * k, Math.max(drag[1], p[1]) * k].map(Math.round); draw(); updateBoxInfo(); });
+canvas.addEventListener("pointerup", () => { drag = null; if (box && (box[2] - box[0] < 4 || box[3] - box[1] < 4)) { box = null; draw(); } updateBoxInfo(); });
+
+function updateBoxInfo() {
+  const el = $("boxInfo");
+  el.textContent = box ? `정답 상자: [${box.join(", ")}] (원본 사진 ${img?.naturalWidth}×${img?.naturalHeight} 기준)` : "정답 상자: 아직 안 그렸어요";
+  el.className = "box-info" + (box ? " set" : "");
+}
+
+function renderItems() {
+  const own = labelsOfCurrent();
+  $("items").innerHTML = own.length ? own.map((l) => `<div class="item"><span title="${l.goal}">${l.id} · ${l.answer.button} — ${l.goal}</span><button class="small" data-del="${l.id}">삭제</button></div>`).join("") : `<p class="empty">아직 없어요.</p>`;
+  $("goals").innerHTML = [...new Set(labels.map((l) => l.goal))].map((g) => `<option value="${g.replace(/"/g, "&quot;")}">`).join("");
+}
+$("items").addEventListener("click", async (e) => {
+  const id = e.target.dataset?.del; if (!id || !confirm(`${id} 문항을 지울까요?`)) return;
+  await fetch("/api/delete", { method: "POST", body: JSON.stringify({ id }) });
+  const s = await (await fetch("/api/state")).json(); labels = s.labels; renderJump(); draw(); renderItems();
+});
+
+function nextId() {
+  const base = currentName().replace(/\.[^.]+$/, ""); let k = 1;
+  while (labels.some((l) => l.id === `${base}-${k}`)) k++;
+  return `${base}-${k}`;
+}
+const split = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
+
+$("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!box) { say("사진에서 정답 버튼을 드래그해서 상자를 먼저 그려 주세요.", "err"); return; }
+  const aliases = split($("aliases").value);
+  const answer = { button: $("button").value.trim(), box, ...(aliases.length ? { aliases } : {}), ...($("stage").value ? { stage: $("stage").value } : {}) };
+  // run-eval.mjs가 읽는 형식과 같은 순서로 쓴다.
+  const item = { id: nextId(), image: "images/" + currentName(), store: $("store").value.trim(), source: $("source").value, goal: $("goal").value.trim(), history: split($("history").value), answer, ...($("note").value.trim() ? { note: $("note").value.trim() } : {}) };
+  const r = await fetch("/api/label", { method: "POST", body: JSON.stringify(item) });
+  const body = await r.json();
+  if (!r.ok) { say(body.error, "err"); return; }
+  remember("store", item.store); remember("source", item.source);
+  labels.push(item); lastAnswer = item.answer.button;
+  box = null; $("button").value = ""; $("aliases").value = ""; $("note").value = "";
+  renderJump(); draw(); renderItems(); updateBoxInfo(); say(`저장했어요: ${item.id}`, "ok"); $("button").focus();
+});
+
+$("addHistory").addEventListener("click", () => { if (!lastAnswer) return; const h = split($("history").value); h.push(lastAnswer); $("history").value = h.join(", "); });
+$("clearBox").addEventListener("click", () => { box = null; draw(); updateBoxInfo(); });
+const go = (i) => { if (i < 0 || i >= images.length) return; idx = i; show(); };
+$("prev").onclick = () => go(idx - 1); $("next").onclick = () => go(idx + 1); $("jump").onchange = (e) => go(Number(e.target.value));
+document.addEventListener("keydown", (e) => { if (e.ctrlKey && e.key === "Enter") $("form").requestSubmit(); });
+window.addEventListener("resize", () => { if (img?.complete) { fit(); draw(); } });
+load();
+</script>
+</body>
+</html>

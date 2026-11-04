@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "eval": "node eval/run-eval.mjs"
+    "eval": "node eval/run-eval.mjs",
+    "label": "node eval/label-server.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
