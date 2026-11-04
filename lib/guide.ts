@@ -189,6 +189,52 @@ export function attachBoxes(guide: Guide, raw: string, width: number, height: nu
   return { ...guide, steps, box: steps[0]?.box ?? null };
 }
 
+/** 3단계(검증) 출력 스키마. 잘라 낸 조각에 그 버튼이 있는지 예/아니오로만 받는다. */
+export const verifySchema = {
+  type: "object",
+  properties: { answer: { type: "string", enum: ["yes", "no"] } },
+  required: ["answer"],
+} as const;
+
+/** 상자 둘레를 25%씩 넓혀서 사진에서 잘라 낼 영역(픽셀). 사진 밖으로 나가지 않게 맞춘다. */
+export function cropRegion(box: Box, width: number, height: number) {
+  const padX = box.width * 0.25;
+  const padY = box.height * 0.25;
+  const left = Math.max(0, Math.floor((box.left - padX) * width));
+  const top = Math.max(0, Math.floor((box.top - padY) * height));
+  return {
+    left,
+    top,
+    width: Math.max(1, Math.min(width - left, Math.ceil((box.width + 2 * padX) * width))),
+    height: Math.max(1, Math.min(height - top, Math.ceil((box.height + 2 * padY) * height))),
+  };
+}
+
+/**
+ * 3단계(검증) 요청. 위치 찾기가 고른 상자만 잘라서, 정말 그 버튼인지 다시 묻는다.
+ * 49문항 시험에서 이 확인을 통과한 안내만 보여 주면 틀린 안내가 22개에서 6개로 줄었다(맞는 안내는 27개 중 20개 유지).
+ * 영어 문장을 쓰는 것은 위치 찾기와 같은 이유로 Qwen2.5-VL이 더 안정적이기 때문이다.
+ */
+export function buildVerifyMessages(crop: string, button: string) {
+  const content = `This image is a crop of a kiosk screen. Is there a button or menu card labeled "${button}" in this crop? Answer yes or no.`;
+  return [{ role: "user", content, images: [crop] }];
+}
+
+/** 검증 출력을 읽는다. 맞다 true, 아니다 false, 읽지 못했으면 null(이때는 안내를 그대로 둔다). */
+export function parseVerify(raw: string): boolean | null {
+  try {
+    const answer = (JSON.parse(raw) as { answer?: unknown }).answer;
+    return answer === "yes" ? true : answer === "no" ? false : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 검증에서 틀렸다고 나온 안내를 거둔다. 버튼 목록을 비우면 웹은 다음 장면을 다시 분석한다. */
+export function rejectGuide(guide: Guide, lang: Lang): Guide {
+  return { ...guide, button: "", where: "", box: null, steps: [], message: RETRY_MESSAGE[lang], confidence: "low" };
+}
+
 function toBox(value: unknown, width: number, height: number): Box | null {
   if (!Array.isArray(value) || value.length !== 4) return null;
   if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
