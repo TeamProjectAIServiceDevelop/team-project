@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   }
 
   const data = (await res.json()) as { message?: { content?: string } };
-  const guide = parseGuide(data.message?.content ?? "", req.width, req.height);
+  const guide = parseGuide(data.message?.content ?? "", req.width, req.height, req.lang);
   if (!guide) {
     return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 찍어 주세요." }, { status: 502 });
   }

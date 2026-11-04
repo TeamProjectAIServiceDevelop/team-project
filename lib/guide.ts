@@ -67,7 +67,13 @@ export function buildMessages(req: GuideRequest) {
 }
 
 /** 모델 출력(JSON 문자열)을 검증하고 좌표를 비율로 바꾼다. 형식이 틀리면 null. */
-export function parseGuide(raw: string, width: number, height: number): Guide | null {
+/** 상자 없이 끝나는 안내(버튼을 못 찾음)에 쓰는 고정 문구. 모델은 상자를 비우고도 버튼 이름을 안내해 버려서 코드가 정한다. */
+export const RETRY_MESSAGE: Record<Lang, string> = {
+  ko: "화면이 잘 안 보여요. 휴대폰을 멈추고 조금 더 가까이, 또렷하게 비춰 주세요.",
+  en: "I can't see the screen clearly. Hold your phone still and point it a little closer.",
+};
+
+export function parseGuide(raw: string, width: number, height: number, lang: Lang = "ko"): Guide | null {
   let data: unknown;
   try {
     data = JSON.parse(raw);
@@ -78,13 +84,17 @@ export function parseGuide(raw: string, width: number, height: number): Guide | 
   const d = data as Record<string, unknown>;
   if (typeof d.message !== "string" || d.message.trim() === "") return null;
 
+  const box = toBox(d.box, width, height);
+  const done = d.done === true;
+
   return {
     stage: typeof d.stage === "string" ? d.stage : "",
     button: typeof d.button === "string" ? d.button : "",
     where: typeof d.where === "string" ? d.where : "",
-    box: toBox(d.box, width, height),
-    message: d.message.trim(),
-    done: d.done === true,
+    box,
+    // 상자가 없고 주문도 끝나지 않았다면 버튼을 못 찾은 것이니 다시 비춰 달라고만 안내한다.
+    message: !box && !done ? RETRY_MESSAGE[lang] : d.message.trim(),
+    done,
     // 값이 없거나 이상하면 low로 숨기지 않고 medium으로 둔다. 모델이 항목을 빼먹어도 안내가 사라지지 않게.
     confidence: d.confidence === "high" || d.confidence === "low" ? d.confidence : "medium",
   };
