@@ -1,15 +1,17 @@
 /** AI에 보낼 사진. 화면에 그릴 때도 같은 사진을 써서 버튼 좌표가 정확히 겹치게 한다. */
 export type Frame = { dataUrl: string; base64: string; width: number; height: number };
 
-// Qwen2.5-VL은 28픽셀 단위로 이미지를 나눠 보므로 크기를 28의 배수로 맞추면
-// 모델이 내놓는 픽셀 좌표가 우리가 보낸 사진의 좌표와 그대로 일치한다.
-const MAX_SIDE = 1024;
+// Ollama는 Qwen2.5-VL에 넣기 전에 사진을 약 100만 픽셀로 키우거나 줄이고, 모델은 그 크기 기준으로
+// 좌표를 낸다. 그래서 1024×576(59만 픽셀)을 보내면 좌표가 1.2배쯤 크게 나와 상자가 오른쪽 아래로 밀렸다.
+// 처음부터 28의 배수이면서 약 98만 픽셀인 크기로 보내면 Ollama가 크기를 바꾸지 않아 좌표가 그대로 맞는다.
+// (실측: 840×1176, 1176×840, 728×1288에서 오차 3픽셀 이내)
+const TARGET_PIXELS = 980_000; // Ollama 상한 28×28×1280 = 1,003,520보다 조금 작게
 const PATCH = 28;
 
 function fitSize(width: number, height: number) {
-  const scale = Math.min(1, MAX_SIDE / Math.max(width, height));
-  const round = (n: number) => Math.max(PATCH, Math.round((n * scale) / PATCH) * PATCH);
-  return { width: round(width), height: round(height) };
+  const scale = Math.sqrt(TARGET_PIXELS / (width * height));
+  const floor = (n: number) => Math.max(PATCH, Math.floor((n * scale) / PATCH) * PATCH);
+  return { width: floor(width), height: floor(height) };
 }
 
 function draw(source: CanvasImageSource, srcWidth: number, srcHeight: number): Frame {

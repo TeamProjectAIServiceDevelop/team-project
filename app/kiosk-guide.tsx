@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Guide, Lang, Menu, MenuItem } from "@/lib/guide";
+import type { Guide, Lang, Menu, MenuItem, Step } from "@/lib/guide";
 import { captureFrame, type Frame } from "./frame";
 import { useLiveCamera } from "./live-camera";
 import { speak, stopSpeaking, useSpeechRecognition } from "./speech";
@@ -39,6 +39,8 @@ const TEXT = {
     retryCamera: "다시 시도",
     thinking: "화면을 보고 있어요. 잠시만 기다려 주세요.",
     pressHere: "여기를 누르세요",
+    snapshot: "분석한 화면",
+    order: "누를 순서",
     replay: "🔊 다시 듣기",
     done: "주문 완료!",
     restart: "처음으로",
@@ -76,6 +78,8 @@ const TEXT = {
     retryCamera: "Try again",
     thinking: "Looking at the screen. One moment, please.",
     pressHere: "Press here",
+    snapshot: "Analyzed photo",
+    order: "Press in order",
     replay: "🔊 Replay",
     done: "Order complete!",
     restart: "Start over",
@@ -98,6 +102,8 @@ export function KioskGuide() {
   const [cameraError, setCameraError] = useState(false);
   const [cameraTry, setCameraTry] = useState(0);
   const [liveGuide, setLiveGuide] = useState<Guide | null>(null);
+  // 안내를 받은 그 사진. 상자를 실시간 영상이 아니라 이 사진 위에 그려야 좌표가 정확히 겹친다.
+  const [liveShot, setLiveShot] = useState<Frame | null>(null);
   const [liveBusy, setLiveBusy] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [menu, setMenu] = useState<Menu | null>(null);
@@ -114,6 +120,9 @@ export function KioskGuide() {
   });
   const t = TEXT[lang];
   const hasGoal = goal.trim() !== "";
+  // 휴대폰이 움직이면 사진을 걷어 내고 실시간 영상을 보여 준다. 멈추면 바뀐 화면을 다시 분석한다.
+  const showMarks =
+    !!liveShot && !!liveGuide && liveGuide.steps.some((s) => s.box) && !live.moving && !liveBusy;
 
   const say = (text: string) => speak(text, lang);
 
@@ -251,6 +260,7 @@ export function KioskGuide() {
         setHistory((h) => [...h, pressedButton]);
       }
       setLiveGuide(next);
+      setLiveShot(scene);
       setLiveBusy(false);
       sayOnce(next.message);
     } catch (e) {
@@ -292,6 +302,7 @@ export function KioskGuide() {
     };
     mic.start(keepGoal, () => {
       setLiveGuide(null);
+      setLiveShot(null);
       lastSpoken.current = "";
       live.rescan();
     });
@@ -488,10 +499,11 @@ export function KioskGuide() {
               </p>
               <div className="relative overflow-hidden rounded-2xl bg-black">
                 <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
-                {!liveGuide?.box && (
+                {showMarks ? (
+                  <AnnotatedShot shot={liveShot!} steps={liveGuide!.steps} t={t} />
+                ) : (
                   <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
                 )}
-                {liveGuide?.box && !live.moving && <PressHere box={liveGuide.box} label={t.pressHere} />}
               </div>
             </>
           )}
@@ -502,6 +514,7 @@ export function KioskGuide() {
               <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
                 {liveGuide.message}
               </p>
+              {liveGuide.steps.length > 1 && <StepList steps={liveGuide.steps} label={t.order} />}
               {liveGuide.stage && (
                 <p className="text-base text-zinc-500">
                   {liveGuide.stage}
@@ -590,12 +603,40 @@ function Feedback({ guide, goal, lang, t }: { guide: Guide; goal: string; lang: 
   );
 }
 
-/** 영상 위에 눌러야 할 버튼을 빨간 상자로 표시한다. 좌표가 비율이라 크기가 바뀌어도 맞는다. */
-function PressHere({ box, label }: { box: NonNullable<Guide["box"]>; label: string }) {
-  const labelBelow = box.top < 0.12;
+// 1번(지금 누를 버튼)은 빨강, 2·3번은 다음 순서라 덜 눈에 띄는 주황·하늘색으로 그린다.
+const STEP_COLORS = ["#dc2626", "#f59e0b", "#0ea5e9"];
+
+/**
+ * 안내를 받은 사진을 영상 위에 덮고, 그 위에 누를 버튼을 1, 2, 3 번호 상자로 그린다.
+ * 사진과 좌표가 같은 장면이라 휴대폰이 조금 흔들려도 상자가 버튼에서 벗어나지 않는다.
+ * 사진은 영상과 같은 비율로 늘려 그리므로, 비율(0~1) 좌표가 사진 속 버튼에 그대로 겹친다.
+ */
+function AnnotatedShot({ shot, steps, t }: { shot: Frame; steps: Step[]; t: Text }) {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* eslint-disable-next-line @next/next/no-img-element -- 방금 찍은 data URL이라 최적화할 것이 없다 */}
+      <img src={shot.dataUrl} alt="" className="absolute inset-0 h-full w-full" />
+      <div className="absolute inset-0 bg-black/30" />
+      <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-sm text-white">
+        📷 {t.snapshot}
+      </span>
+      {/* 1번이 맨 위에 오도록 거꾸로 그린다. */}
+      {steps
+        .map((step, i) => ({ step, i }))
+        .reverse()
+        .map(({ step, i }) => step.box && <StepMark key={i} box={step.box} n={i + 1} label={i === 0 ? t.pressHere : ""} />)}
+    </div>
+  );
+}
+
+function StepMark({ box, n, label }: { box: NonNullable<Step["box"]>; n: number; label: string }) {
+  const color = STEP_COLORS[n - 1] ?? STEP_COLORS[STEP_COLORS.length - 1];
+  const first = n === 1;
+  // 상자가 사진 위쪽 끝에 붙어 있으면 번호와 글자를 상자 안쪽·아래로 옮겨 잘리지 않게 한다.
+  const nearTop = box.top < 0.08;
   return (
     <div
-      className="pointer-events-none absolute"
+      className="absolute"
       style={{
         left: `${box.left * 100}%`,
         top: `${box.top * 100}%`,
@@ -603,15 +644,54 @@ function PressHere({ box, label }: { box: NonNullable<Guide["box"]>; label: stri
         height: `${box.height * 100}%`,
       }}
     >
-      <div className="absolute -inset-1 animate-ping rounded-lg border-4 border-red-500 opacity-60" />
-      <div className="absolute -inset-1 rounded-lg border-4 border-red-500 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+      {first && (
+        <div className="absolute -inset-1 animate-ping rounded-lg border-4 opacity-60" style={{ borderColor: color }} />
+      )}
+      <div
+        className={`absolute -inset-1 rounded-lg ${first ? "border-4 bg-white/10" : "border-[3px] border-dashed"}`}
+        style={{ borderColor: color }}
+      />
       <span
-        className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-red-600 px-3 py-1 text-base font-bold text-white ${
-          labelBelow ? "top-full mt-2" : "bottom-full mb-2"
-        }`}
+        className={`absolute flex items-center justify-center rounded-full font-black text-white shadow-lg ring-2 ring-white ${
+          first ? "h-10 w-10 text-2xl" : "h-8 w-8 text-lg"
+        } ${nearTop ? "-left-2 top-1" : "-left-3 -top-4"}`}
+        style={{ backgroundColor: color }}
       >
-        {labelBelow ? "▲" : "▼"} {label}
+        {n}
       </span>
+      {label && (
+        <span
+          className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-base font-bold text-white ${
+            nearTop ? "top-full mt-2" : "bottom-full mb-2"
+          }`}
+          style={{ backgroundColor: color }}
+        >
+          {nearTop ? "▲" : "▼"} {label}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** 사진 아래에 누를 순서를 같은 색 번호로 적는다. 사진에서 상자를 못 그린 버튼도 여기에는 나온다. */
+function StepList({ steps, label }: { steps: Step[]; label: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-base text-zinc-500">{label}</span>
+      <ol className="flex flex-wrap items-center gap-2 text-xl font-bold">
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {i > 0 && <span className="text-zinc-400">→</span>}
+            <span
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-lg text-white"
+              style={{ backgroundColor: STEP_COLORS[i] ?? STEP_COLORS[STEP_COLORS.length - 1] }}
+            >
+              {i + 1}
+            </span>
+            <span className={i === 0 ? "" : "text-zinc-500"}>{step.button}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
