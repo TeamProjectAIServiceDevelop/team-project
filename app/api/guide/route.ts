@@ -72,5 +72,6 @@ function mockGuide(req: GuideRequest): Guide {
     box: done ? null : { left: 0.35 + step * 0.1, top: 0.4, width: 0.25, height: 0.15 },
     message: done ? "주문이 끝났어요. 영수증을 챙기세요." : `화면 가운데 '${button}' 버튼을 누르세요.`,
     done,
+    confidence: "high",
   };
 }

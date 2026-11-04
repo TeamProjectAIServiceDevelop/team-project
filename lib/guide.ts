@@ -3,6 +3,9 @@ export type Lang = "ko" | "en";
 /** 버튼 위치. 사진 너비·높이에 대한 비율(0~1)이라 화면 크기와 상관없이 그대로 겹쳐 그릴 수 있다. */
 export type Box = { left: number; top: number; width: number; height: number };
 
+/** 모델이 이 안내를 얼마나 확신하는지. low면 웹은 상자를 띄우지 않고 다음 장면을 다시 분석한다. */
+export type Confidence = "high" | "medium" | "low";
+
 export type Guide = {
   stage: string;
   button: string;
@@ -10,6 +13,7 @@ export type Guide = {
   box: Box | null;
   message: string;
   done: boolean;
+  confidence: Confidence;
 };
 
 export type GuideRequest = {
@@ -31,8 +35,9 @@ export const guideSchema = {
     box: { type: "array", items: { type: "number" } },
     message: { type: "string" },
     done: { type: "boolean" },
+    confidence: { type: "string", enum: ["high", "medium", "low"] },
   },
-  required: ["stage", "button", "where", "box", "message", "done"],
+  required: ["stage", "button", "where", "box", "message", "done", "confidence"],
 } as const;
 
 export function buildMessages(req: GuideRequest) {
@@ -48,6 +53,7 @@ export function buildMessages(req: GuideRequest) {
     "where는 버튼 위치를 방향으로 설명한다(예: 화면 오른쪽 아래).",
     "message는 소리 내어 읽어 줄 안내문이다. 짧고 쉬운 한두 문장으로, 위치와 버튼 이름을 함께 말한다.",
     "결제 단계라면 금액을 확인하라고 덧붙인다.",
+    "confidence는 이 안내가 맞다는 확신이다. 버튼 글자가 또렷이 보이고 목표와 분명히 맞으면 high, 비슷한 버튼이 여럿이거나 일부만 보이면 medium, 짐작이거나 화면이 흐리면 low로 한다.",
     `stage, button, where, message는 ${answerLang}로 쓴다. button은 화면에 적힌 글자 그대로 쓴다.`,
   ].join("\n");
 
@@ -79,6 +85,8 @@ export function parseGuide(raw: string, width: number, height: number): Guide | 
     box: toBox(d.box, width, height),
     message: d.message.trim(),
     done: d.done === true,
+    // 값이 없거나 이상하면 low로 숨기지 않고 medium으로 둔다. 모델이 항목을 빼먹어도 안내가 사라지지 않게.
+    confidence: d.confidence === "high" || d.confidence === "low" ? d.confidence : "medium",
   };
 }
 

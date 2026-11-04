@@ -77,5 +77,6 @@ npm run eval -- --data eval/data/sample --name mock
 | `--url` | `http://localhost:3000/api/guide` | 평가할 API 주소. 배포 주소도 된다 |
 | `--lang` | `ko` | 안내 언어 |
 | `--limit` | 전체 | 앞에서부터 몇 문항만 |
+| `--pixels` | `0` | 사진을 이 픽셀 수(가로×세로)에 맞춰 키우거나 줄여서 보낸다. 0이면 긴 변 1024 이하로 줄이기만 한다. 예: `--pixels 840000` |
 
 결과는 화면에 표로 나오고, `eval/results/`에 문항별 결과(`.csv`)와 요약(`.json`)이 저장된다.

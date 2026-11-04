@@ -12,6 +12,8 @@ const { values: args } = parseArgs({
     url: { type: "string", default: "http://localhost:3000/api/guide" },
     lang: { type: "string", default: "ko" },
     limit: { type: "string" },
+    // 사진을 이 픽셀 수(가로×세로)에 맞춰 키우거나 줄여서 보낸다. 0이면 긴 변 1024 이하로 줄이기만 한다.
+    pixels: { type: "string", default: "0" },
   },
 });
 
@@ -27,7 +29,10 @@ const MAX_SIDE = 1024;
 const PATCH = 28;
 
 function fitSize(width, height) {
-  const scale = Math.min(1, MAX_SIDE / Math.max(width, height));
+  const target = Number(args.pixels);
+  // Ollama는 사진 크기와 상관없이 이미지를 안쪽에서 일정 크기로 바꾸고, 모델은 그 크기 기준 좌표를 낸다.
+  // 작은 사진을 그대로 보내면 좌표가 어긋나므로, 그 크기 근처로 맞춰 보낼 수 있게 한다.
+  const scale = target > 0 ? Math.sqrt(target / (width * height)) : Math.min(1, MAX_SIDE / Math.max(width, height));
   const round = (n) => Math.max(PATCH, Math.round((n * scale) / PATCH) * PATCH);
   return { width: round(width), height: round(height) };
 }
@@ -171,6 +176,7 @@ for (const [i, item] of items.entries()) {
     goal: item.goal,
     answerButton: item.answer.button,
     aiButton: guide?.button ?? "",
+    confidence: guide?.confidence ?? "",
     buttonOk: isButtonCorrect(item.answer, guide?.button),
     positionOk: isPositionCorrect(item.answer, guide?.box, image),
     ms: result.ms,
@@ -196,6 +202,15 @@ console.log(`
 - 응답 시간: 평균 ${seconds(overall.meanMs)}, 중앙값 ${seconds(overall.medianMs)}, 최대 ${seconds(overall.maxMs)}, 5초 이내 ${percent(overall.within5s, overall.total - overall.errors)}
 - 답을 못 받은 문항: ${overall.errors}개
 `);
+// 확신도가 실제로 쓸모 있으려면 high일 때 정답률이 low일 때보다 높아야 한다.
+const levels = ["high", "medium", "low"].map((level) => ({ level, rows: rows.filter((r) => r.confidence === level) })).filter((l) => l.rows.length > 0);
+if (levels.length > 0) {
+  console.log("확신도별");
+  for (const l of levels) {
+    console.log(`- ${l.level}: ${l.rows.length}문항, 버튼 ${percent(l.rows.filter((r) => r.buttonOk).length, l.rows.length)}, 위치 ${percent(l.rows.filter((r) => r.positionOk).length, l.rows.length)}`);
+  }
+  console.log();
+}
 if (stores.length > 1) {
   console.log("매장별");
   for (const s of stores) {
@@ -207,7 +222,7 @@ if (stores.length > 1) {
 const outDir = path.join("eval", "results");
 await mkdir(outDir, { recursive: true });
 const base = path.join(outDir, `${timestamp()}-${args.name}`);
-const columns = ["id", "store", "source", "goal", "answerButton", "aiButton", "buttonOk", "positionOk", "ms", "error", "aiMessage"];
+const columns = ["id", "store", "source", "goal", "answerButton", "aiButton", "confidence", "buttonOk", "positionOk", "ms", "error", "aiMessage"];
 const csv = [columns.join(","), ...rows.map((r) => columns.map((c) => csvCell(r[c])).join(","))].join("\n");
 await writeFile(`${base}.csv`, "﻿" + csv, "utf8"); // BOM: 엑셀에서 한글이 깨지지 않게
 await writeFile(
