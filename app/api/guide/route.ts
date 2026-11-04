@@ -1,7 +1,15 @@
-import { buildMessages, guideSchema, parseGuide, type Guide, type GuideRequest } from "@/lib/guide";
+import {
+  attachBoxes,
+  buildLocateMessages,
+  buildMessages,
+  guideSchema,
+  parseGuide,
+  type Guide,
+  type GuideRequest,
+  type Step,
+} from "@/lib/guide";
+import { AiError, chat } from "@/lib/ollama";
 
-const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "qwen2.5vl:7b";
 const MOCK = process.env.KIOSK_AI_MOCK === "1";
 
 export async function POST(request: Request) {
@@ -10,33 +18,29 @@ export async function POST(request: Request) {
 
   if (MOCK) return Response.json(mockGuide(req));
 
-  let res: Response;
+  // 1단계: 이 화면에서 누를 버튼과 순서를 정한다.
+  let content: string;
   try {
-    res = await fetch(`${OLLAMA_URL}/api/chat`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        stream: false,
-        format: guideSchema,
-        options: { temperature: 0 },
-        messages: buildMessages(req),
-      }),
-      signal: AbortSignal.timeout(90_000),
-    });
-  } catch {
-    return Response.json({ error: "AI 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요." }, { status: 503 });
-  }
-  if (!res.ok) {
-    return Response.json({ error: `AI 서버 오류 (${res.status})` }, { status: 502 });
+    content = await chat(buildMessages(req), guideSchema);
+  } catch (e) {
+    if (e instanceof AiError) return Response.json({ error: e.message }, { status: e.status });
+    throw e;
   }
 
-  const data = (await res.json()) as { message?: { content?: string } };
-  const guide = parseGuide(data.message?.content ?? "", req.width, req.height, req.lang);
+  const guide = parseGuide(content, req.lang);
   if (!guide) {
-    return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 찍어 주세요." }, { status: 502 });
+    return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 비춰 주세요." }, { status: 502 });
   }
-  return Response.json(guide);
+  if (guide.steps.length === 0) return Response.json(guide);
+
+  // 2단계: 고른 버튼들의 위치를 한 번에 찾는다. 실패해도 음성 안내는 할 수 있으니 상자 없이 돌려준다.
+  try {
+    const located = await chat(buildLocateMessages(req.image, guide.steps));
+    return Response.json(attachBoxes(guide, located, req.width, req.height));
+  } catch (e) {
+    if (e instanceof AiError) return Response.json(guide);
+    throw e;
+  }
 }
 
 function readRequest(body: unknown): GuideRequest | null {
@@ -64,13 +68,20 @@ function readRequest(body: unknown): GuideRequest | null {
 function mockGuide(req: GuideRequest): Guide {
   const step = req.history.length;
   const done = step >= 2;
-  const button = ["커피", "아이스 아메리카노", "결제하기"][Math.min(step, 2)];
+  const plan: Step[] = [
+    { button: "커피(ICE)", kind: "button", box: { left: 0.35, top: 0.1, width: 0.15, height: 0.05 } },
+    { button: "(ICE)아메리카노", kind: "menu", box: { left: 0.24, top: 0.22, width: 0.17, height: 0.24 } },
+    { button: "결제하기", kind: "button", box: { left: 0.7, top: 0.82, width: 0.25, height: 0.12 } },
+  ];
+  const steps = done ? [] : plan.slice(step);
+  const button = steps[0]?.button ?? "";
   return {
     stage: ["메뉴 선택", "메뉴 선택", "장바구니"][Math.min(step, 2)],
     button,
     where: "화면 가운데",
-    box: done ? null : { left: 0.35 + step * 0.1, top: 0.4, width: 0.25, height: 0.15 },
-    message: done ? "주문이 끝났어요. 영수증을 챙기세요." : `화면 가운데 '${button}' 버튼을 누르세요.`,
+    box: steps[0]?.box ?? null,
+    steps,
+    message: done ? "주문이 끝났어요. 영수증을 챙기세요." : `1번 '${button}' 버튼을 누르세요.`,
     done,
     confidence: "high",
   };

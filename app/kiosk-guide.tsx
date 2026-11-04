@@ -1,82 +1,142 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Guide, Lang } from "@/lib/guide";
-import { captureFrame, fileToFrame, type Frame } from "./frame";
+import type { Guide, Lang, Menu, MenuItem, Step } from "@/lib/guide";
+import { captureFrame, type Frame } from "./frame";
+import { useLiveCamera } from "./live-camera";
 import { speak, stopSpeaking, useSpeechRecognition } from "./speech";
 
-type Phase = "goal" | "camera" | "thinking" | "result";
+// goal: 목표 입력(필수). menu: 메뉴 화면을 찍어 목표 고르기. live: 실시간 카메라로 목표에 맞게 안내.
+type Phase = "goal" | "menu" | "live";
+
+const RETRY_MS = 3000; // 실시간 분석이 실패하면 이만큼 쉬었다가 다시 본다
 
 const TEXT = {
   ko: {
     goalTitle: "무엇을 주문하고 싶으세요?",
-    goalHint: "마이크를 누르고 말해 보세요. 예: 아이스 아메리카노 한 잔 포장",
+    goalHint: "마이크를 누르고 말하거나, 글자로 적거나, 메뉴 화면을 찍어서 고른 뒤 시작하기를 누르세요.",
+    menuOpen: "📷 메뉴 찍어서 고르기",
+    menuPoint: "키오스크 메뉴 화면이 테두리 안에 들어오게 비추고 찍기를 누르세요.",
+    shoot: "📷 찍기",
+    menuReading: "메뉴를 읽고 있어요. 잠시만 기다려 주세요.",
+    menuRetake: "다시 찍기",
+    menuBack: "돌아가기",
+    menuChosen: "목표로 정했어요. 필요하면 포장이나 수량을 덧붙이고 시작하기를 누르세요.",
+    menuFailed: "메뉴를 읽지 못했어요. 다시 찍어 주세요.",
     goalPlaceholder: "예: 아이스 아메리카노 한 잔 포장",
+    goalNeeded: "먼저 주문할 메뉴를 말하거나 적어 주세요.",
     micStart: "🎤 말하기",
     micStop: "■ 그만 듣기",
-    micUnsupported: "이 브라우저는 음성 입력을 지원하지 않아요. 글자로 입력해 주세요.",
-    start: "시작하기",
-    pointCamera: "키오스크 화면이 테두리 안에 들어오게 비추고 찍기 버튼을 누르세요.",
-    shoot: "📷 찍기",
-    upload: "사진 고르기",
-    cameraError: "카메라를 열 수 없어요. 사진 고르기를 눌러 주세요.",
+    micUnsupported: "이 브라우저는 음성 입력을 지원하지 않아요. 주문할 메뉴를 글자로 적어 주세요.",
+    start: "▶ 시작하기",
+    live: "실시간",
+    livePoint: "키오스크 화면이 테두리 안에 들어오게 비춰 주세요. 화면을 보고 바로 안내해 드려요.",
+    liveNext: "버튼을 누르면 바뀐 화면을 자동으로 보고 다음을 알려 드려요.",
+    listening: "듣고 있어요. 바꿀 주문을 말해 주세요.",
+    liveMicChange: "🎤 목표 바꿔 말하기",
+    holdStill: "휴대폰을 잠시 멈춰 주세요.",
+    cameraError: "카메라를 열 수 없어요. 브라우저에서 카메라 권한을 허용한 뒤 다시 시도해 주세요.",
+    retryCamera: "다시 시도",
     thinking: "화면을 보고 있어요. 잠시만 기다려 주세요.",
     pressHere: "여기를 누르세요",
+    snapshot: "분석한 화면",
+    order: "누를 순서",
     replay: "🔊 다시 듣기",
-    pressed: "눌렀어요, 다음 화면",
-    retake: "다시 찍기",
-    nextShot: "잘하셨어요. 바뀐 화면을 다시 찍어 주세요.",
     done: "주문 완료!",
     restart: "처음으로",
-    changeGoal: "목표 바꾸기",
     goal: "목표",
-    failed: "안내를 받지 못했어요. 다시 찍어 주세요.",
+    failed: "안내를 받지 못했어요. 잠시 후 다시 볼게요.",
+    feedbackAsk: "안내가 맞았나요?",
+    feedbackGood: "👍 맞았어요",
+    feedbackBad: "👎 틀렸어요",
+    feedbackThanks: "알려 주셔서 고마워요!",
   },
   en: {
     goalTitle: "What would you like to order?",
-    goalHint: "Tap the mic and speak. e.g. One iced americano to go",
+    goalHint: "Speak, type, or take a photo of the menu screen to choose, then tap Start.",
+    menuOpen: "📷 Choose from a menu photo",
+    menuPoint: "Fit the kiosk menu screen inside the frame and tap Shoot.",
+    shoot: "📷 Shoot",
+    menuReading: "Reading the menu. One moment, please.",
+    menuRetake: "Retake",
+    menuBack: "Back",
+    menuChosen: "set as your goal. Add details like to-go or quantity if needed, then tap Start.",
+    menuFailed: "Couldn't read the menu. Please take the photo again.",
     goalPlaceholder: "e.g. One iced americano to go",
+    goalNeeded: "First say or type what you'd like to order.",
     micStart: "🎤 Speak",
     micStop: "■ Stop",
-    micUnsupported: "Voice input isn't supported in this browser. Please type instead.",
-    start: "Start",
-    pointCamera: "Fit the kiosk screen inside the frame and tap the shoot button.",
-    shoot: "📷 Shoot",
-    upload: "Choose photo",
-    cameraError: "Can't open the camera. Tap Choose photo instead.",
+    micUnsupported: "Voice input isn't supported in this browser. Please type what you'd like to order.",
+    start: "▶ Start",
+    live: "LIVE",
+    livePoint: "Fit the kiosk screen inside the frame. I'll guide you as soon as I see it.",
+    liveNext: "After you press it, I'll see the new screen and tell you what's next.",
+    listening: "Listening. Tell me your new order.",
+    liveMicChange: "🎤 Change goal",
+    holdStill: "Please hold your phone still.",
+    cameraError: "Can't open the camera. Allow camera access in your browser and try again.",
+    retryCamera: "Try again",
     thinking: "Looking at the screen. One moment, please.",
     pressHere: "Press here",
+    snapshot: "Analyzed photo",
+    order: "Press in order",
     replay: "🔊 Replay",
-    pressed: "Done, next screen",
-    retake: "Retake",
-    nextShot: "Well done. Please take a photo of the new screen.",
     done: "Order complete!",
     restart: "Start over",
-    changeGoal: "Change goal",
     goal: "Goal",
-    failed: "Couldn't get guidance. Please take the photo again.",
+    failed: "Couldn't get guidance. I'll look again shortly.",
+    feedbackAsk: "Was this right?",
+    feedbackGood: "👍 Yes",
+    feedbackBad: "👎 No",
+    feedbackThanks: "Thanks for letting us know!",
   },
 } satisfies Record<Lang, Record<string, string>>;
+
+type Text = (typeof TEXT)[Lang];
 
 export function KioskGuide() {
   const [lang, setLang] = useState<Lang>("ko");
   const [phase, setPhase] = useState<Phase>("goal");
   const [goal, setGoal] = useState("");
   const [history, setHistory] = useState<string[]>([]);
-  const [frame, setFrame] = useState<Frame | null>(null);
-  const [guide, setGuide] = useState<Guide | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState(false);
+  const [cameraTry, setCameraTry] = useState(0);
+  const [liveGuide, setLiveGuide] = useState<Guide | null>(null);
+  // 안내를 받은 그 사진. 상자를 실시간 영상이 아니라 이 사진 위에 그려야 좌표가 정확히 겹친다.
+  const [liveShot, setLiveShot] = useState<Frame | null>(null);
+  const [liveBusy, setLiveBusy] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
+  const [menu, setMenu] = useState<Menu | null>(null);
+  const [menuBusy, setMenuBusy] = useState(false);
+  const [menuError, setMenuError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const lastSpoken = useRef("");
   const mic = useSpeechRecognition(lang);
+  const live = useLiveCamera(videoRef, {
+    // 말하는 동안에는 반쯤 말한 목표로 묻지 않도록 분석을 멈춘다.
+    enabled: phase === "live" && !cameraError && !liveGuide?.done && !mic.listening,
+    busy: liveBusy,
+    onScene: askLive,
+  });
   const t = TEXT[lang];
+  const hasGoal = goal.trim() !== "";
+  // 휴대폰이 움직이면 사진을 걷어 내고 실시간 영상을 보여 준다. 멈추면 바뀐 화면을 다시 분석한다.
+  const showMarks =
+    !!liveShot && !!liveGuide && liveGuide.steps.some((s) => s.box) && !live.moving && !liveBusy;
 
   const say = (text: string) => speak(text, lang);
 
-  // 촬영 단계에서만 후면 카메라를 켜고, 벗어나면 끈다.
+  // 실시간 화면이 계속 같은 안내를 내도 한 번만 읽어 준다.
+  function sayOnce(text: string) {
+    if (text === lastSpoken.current) return;
+    lastSpoken.current = text;
+    say(text);
+  }
+
+  // 실시간 안내와 메뉴 찍기 단계에서만 후면 카메라를 켜고, 벗어나면 끈다.
+  const cameraOn = phase === "live" || (phase === "menu" && !menu);
   useEffect(() => {
-    if (phase !== "camera") return;
+    if (!cameraOn) return;
     let stream: MediaStream | undefined;
     let cancelled = false;
     navigator.mediaDevices
@@ -97,13 +157,129 @@ export function KioskGuide() {
       cancelled = true;
       stream?.getTracks().forEach((track) => track.stop());
     };
-  }, [phase]);
+  }, [cameraOn, cameraTry]);
 
-  function goToCamera(announcement: string) {
+  async function requestGuide(next: Frame, sentHistory: string[]): Promise<Guide> {
+    const res = await fetch("/api/guide", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        image: next.base64,
+        width: next.width,
+        height: next.height,
+        goal,
+        history: sentHistory,
+        lang,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error ?? t.failed);
+    return data as Guide;
+  }
+
+  function startLive() {
+    mic.stop();
     setCameraError(false);
-    setGuide(null);
-    setPhase("camera");
-    say(announcement);
+    setLiveGuide(null);
+    setLiveError(null);
+    setLiveBusy(false);
+    lastSpoken.current = "";
+    live.rescan();
+    setPhase("live");
+    sayOnce(t.livePoint);
+  }
+
+  function openMenu() {
+    mic.stop();
+    setCameraError(false);
+    setMenu(null);
+    setMenuError(null);
+    setPhase("menu");
+    say(t.menuPoint);
+  }
+
+  async function shootMenu() {
+    const video = videoRef.current;
+    if (!video || video.videoWidth === 0 || menuBusy) return;
+    const shot = captureFrame(video);
+    setMenuBusy(true);
+    setMenuError(null);
+    say(t.menuReading);
+    try {
+      const res = await fetch("/api/menu", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ image: shot.base64, lang }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? t.menuFailed);
+      const read = data as Menu;
+      if (read.items.length === 0) {
+        setMenuError(read.message);
+        say(read.message);
+        return;
+      }
+      setMenu(read);
+      say(read.message);
+    } catch (e) {
+      const message = e instanceof Error && e.message ? e.message : t.menuFailed;
+      setMenuError(message);
+      say(message);
+    } finally {
+      setMenuBusy(false);
+    }
+  }
+
+  // 메뉴를 고르지 않고 돌아가면 먼저 적어 둔 목표는 그대로 둔다.
+  function closeMenu() {
+    setMenu(null);
+    setMenuError(null);
+    setPhase("goal");
+  }
+
+  function pickMenu(item: MenuItem) {
+    setGoal(item.name);
+    setMenu(null);
+    setPhase("goal");
+    say(`${item.name}, ${t.menuChosen}`);
+  }
+
+  function retryCamera() {
+    setCameraError(false);
+    setCameraTry((n) => n + 1);
+  }
+
+  async function askLive(scene: Frame) {
+    setLiveBusy(true);
+    setLiveError(null);
+    try {
+      const next = await requestGuide(scene, history);
+      // 다른 버튼을 안내받았으면 앞에서 안내한 버튼은 누른 것으로 본다.
+      if (liveGuide?.button && next.button !== liveGuide.button) {
+        const pressedButton = liveGuide.button;
+        setHistory((h) => [...h, pressedButton]);
+      }
+      setLiveGuide(next);
+      setLiveShot(scene);
+      setLiveBusy(false);
+      sayOnce(next.message);
+    } catch (e) {
+      const message = e instanceof Error && e.message ? e.message : t.failed;
+      setLiveError(message);
+      sayOnce(message);
+      setTimeout(() => {
+        setLiveBusy(false);
+        live.rescan();
+      }, RETRY_MS);
+    }
+  }
+
+  function liveStatus() {
+    if (mic.listening) return t.listening;
+    if (live.moving) return t.holdStill;
+    if (liveBusy) return t.thinking;
+    if (!liveGuide) return t.livePoint;
+    return t.liveNext;
   }
 
   function toggleMic() {
@@ -114,62 +290,35 @@ export function KioskGuide() {
     mic.start(setGoal);
   }
 
-  async function ask(next: Frame) {
-    setFrame(next);
-    setError(null);
-    setPhase("thinking");
-    say(t.thinking);
-    try {
-      const res = await fetch("/api/guide", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          image: next.base64,
-          width: next.width,
-          height: next.height,
-          goal,
-          history,
-          lang,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? t.failed);
-      setGuide(data as Guide);
-      setPhase("result");
-      say((data as Guide).message);
-    } catch (e) {
-      const message = e instanceof Error && e.message ? e.message : t.failed;
-      setError(message);
-      setCameraError(false);
-      setPhase("camera");
-      say(message);
+  // 실시간 안내 중에 목표를 바꿔 말하면, 말이 끝난 뒤 같은 화면을 새 목표로 다시 본다.
+  // 아무 말도 인식되지 않으면 원래 목표를 그대로 둔다.
+  function toggleLiveMic() {
+    if (mic.listening) {
+      mic.stop();
+      return;
     }
-  }
-
-  function shoot() {
-    const video = videoRef.current;
-    if (!video || video.videoWidth === 0) return;
-    void ask(captureFrame(video));
-  }
-
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (file) void ask(await fileToFrame(file));
-  }
-
-  function pressed() {
-    if (guide?.button) setHistory((h) => [...h, guide.button]);
-    goToCamera(t.nextShot);
+    const keepGoal = (text: string) => {
+      if (text.trim()) setGoal(text);
+    };
+    mic.start(keepGoal, () => {
+      setLiveGuide(null);
+      setLiveShot(null);
+      lastSpoken.current = "";
+      live.rescan();
+    });
   }
 
   function restart() {
     stopSpeaking();
+    mic.stop();
     setGoal("");
     setHistory([]);
-    setFrame(null);
-    setGuide(null);
-    setError(null);
+    setLiveGuide(null);
+    setLiveError(null);
+    setLiveBusy(false);
+    setMenu(null);
+    setMenuError(null);
+    lastSpoken.current = "";
     setPhase("goal");
   }
 
@@ -191,14 +340,14 @@ export function KioskGuide() {
         </div>
       </header>
 
-      {phase !== "goal" && (
+      {phase === "live" && (
         <div className="flex items-center justify-between gap-3 rounded-xl bg-zinc-100 px-4 py-3 text-lg dark:bg-zinc-900">
           <span>
             <span className="text-zinc-500">{t.goal}: </span>
             {goal}
           </span>
           <button type="button" onClick={restart} className="shrink-0 text-base underline">
-            {t.changeGoal}
+            {t.restart}
           </button>
         </div>
       )}
@@ -221,7 +370,7 @@ export function KioskGuide() {
             <button
               type="button"
               onClick={toggleMic}
-              className={`h-20 rounded-2xl text-2xl font-bold text-white ${
+              className={`h-16 rounded-2xl text-2xl font-bold text-white ${
                 mic.listening ? "animate-pulse bg-red-600" : "bg-blue-600"
               }`}
             >
@@ -230,115 +379,180 @@ export function KioskGuide() {
           )}
           <button
             type="button"
-            disabled={goal.trim() === ""}
-            onClick={() => {
-              mic.stop();
-              goToCamera(t.pointCamera);
-            }}
-            className="h-16 rounded-2xl bg-foreground text-2xl font-bold text-background disabled:opacity-30"
+            onClick={openMenu}
+            className="h-16 rounded-2xl border-2 border-zinc-300 text-2xl font-bold dark:border-zinc-700"
+          >
+            {t.menuOpen}
+          </button>
+          <button
+            type="button"
+            onClick={startLive}
+            disabled={!hasGoal}
+            className="h-20 rounded-2xl bg-foreground text-3xl font-bold text-background disabled:opacity-30"
           >
             {t.start}
+          </button>
+          {!hasGoal && <p className="text-center text-lg text-zinc-500">{t.goalNeeded}</p>}
+        </section>
+      )}
+
+      {phase === "menu" && (
+        <section className="flex flex-col gap-4">
+          {menuError && (
+            <p role="alert" className="rounded-xl bg-red-100 p-4 text-lg text-red-800 dark:bg-red-950 dark:text-red-200">
+              {menuError}
+            </p>
+          )}
+          {menu ? (
+            <>
+              <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
+                {menu.message}
+              </p>
+              <ul className="flex flex-col gap-3">
+                {menu.items.map((item, i) => (
+                  <li key={`${i}-${item.name}`}>
+                    <button
+                      type="button"
+                      onClick={() => pickMenu(item)}
+                      className="flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border-2 border-zinc-300 px-5 py-3 text-left text-2xl font-bold dark:border-zinc-700"
+                    >
+                      <span>{item.name}</span>
+                      {item.price && <span className="shrink-0 text-xl text-zinc-500">{item.price}</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={openMenu}
+                className="h-14 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
+              >
+                {t.menuRetake}
+              </button>
+            </>
+          ) : cameraError ? (
+            <>
+              <p className="text-lg">{t.cameraError}</p>
+              <button
+                type="button"
+                onClick={retryCamera}
+                className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
+              >
+                {t.retryCamera}
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-lg" aria-live="polite">
+                {menuBusy ? t.menuReading : t.menuPoint}
+              </p>
+              <div className="relative overflow-hidden rounded-2xl bg-black">
+                <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
+                <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
+                {menuBusy && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-2xl font-bold text-white">
+                    <span className="animate-pulse">{t.menuReading}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={shootMenu}
+                disabled={menuBusy}
+                className="h-20 rounded-2xl bg-blue-600 text-2xl font-bold text-white disabled:opacity-50"
+              >
+                {t.shoot}
+              </button>
+            </>
+          )}
+          <button type="button" onClick={closeMenu} className="text-lg underline">
+            {t.menuBack}
           </button>
         </section>
       )}
 
-      {phase === "camera" && (
+      {phase === "live" && (
         <section className="flex flex-col gap-4">
-          {error && (
+          {liveError && (
             <p role="alert" className="rounded-xl bg-red-100 p-4 text-lg text-red-800 dark:bg-red-950 dark:text-red-200">
-              {error}
+              {liveError}
             </p>
           )}
-          <p className="text-lg">{cameraError ? t.cameraError : t.pointCamera}</p>
-          {!cameraError && (
-            <div className="relative overflow-hidden rounded-2xl bg-black">
-              <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
-              <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
-            </div>
-          )}
-          <div className="flex gap-3">
-            {!cameraError && (
+          {cameraError ? (
+            <>
+              <p className="text-lg">{t.cameraError}</p>
               <button
                 type="button"
-                onClick={shoot}
-                className="h-20 flex-1 rounded-2xl bg-blue-600 text-2xl font-bold text-white"
+                onClick={retryCamera}
+                className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
               >
-                {t.shoot}
+                {t.retryCamera}
               </button>
-            )}
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className={`h-20 rounded-2xl border-2 border-zinc-300 px-4 text-lg font-bold dark:border-zinc-700 ${
-                cameraError ? "flex-1" : ""
-              }`}
-            >
-              {t.upload}
-            </button>
-            <input ref={fileRef} type="file" accept="image/*" capture="environment" hidden onChange={onFile} />
-          </div>
-        </section>
-      )}
-
-      {(phase === "thinking" || phase === "result") && frame && (
-        <section className="flex flex-col gap-4">
-          <div className="relative overflow-hidden rounded-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element -- 방금 찍은 data URL 사진이라 next/image 최적화 대상이 아니다 */}
-            <img src={frame.dataUrl} alt="찍은 키오스크 화면" className="block w-full" />
-            {phase === "thinking" && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-2xl font-bold text-white">
-                <span className="animate-pulse">{t.thinking}</span>
-              </div>
-            )}
-            {phase === "result" && guide?.box && <PressHere box={guide.box} label={t.pressHere} />}
-          </div>
-
-          {phase === "result" && guide && (
+            </>
+          ) : (
             <>
-              {guide.done && <p className="text-center text-3xl font-bold text-green-600">{t.done}</p>}
-              <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
-                {guide.message}
+              <p className="text-lg" aria-live="polite">
+                <span className="mr-2 rounded-full bg-red-600 px-2.5 py-0.5 align-middle text-sm font-bold text-white">
+                  ● {t.live}
+                </span>
+                {liveStatus()}
               </p>
-              {guide.stage && (
+              <div className="relative overflow-hidden rounded-2xl bg-black">
+                <video ref={videoRef} autoPlay playsInline muted className="block w-full" />
+                {showMarks ? (
+                  <AnnotatedShot shot={liveShot!} steps={liveGuide!.steps} t={t} />
+                ) : (
+                  <div className="pointer-events-none absolute inset-4 rounded-xl border-4 border-dashed border-white/80" />
+                )}
+              </div>
+            </>
+          )}
+
+          {liveGuide && (
+            <>
+              {liveGuide.done && <p className="text-center text-3xl font-bold text-green-600">{t.done}</p>}
+              <p className="rounded-2xl bg-yellow-100 p-5 text-2xl font-bold leading-snug text-zinc-900">
+                {liveGuide.message}
+              </p>
+              {liveGuide.steps.length > 1 && <StepList steps={liveGuide.steps} label={t.order} />}
+              {liveGuide.stage && (
                 <p className="text-base text-zinc-500">
-                  {guide.stage}
+                  {liveGuide.stage}
                   {history.length > 0 && ` · ${history.join(" → ")}`}
                 </p>
               )}
               <button
                 type="button"
-                onClick={() => say(guide.message)}
+                onClick={() => say(liveGuide.message)}
                 className="h-14 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
               >
                 {t.replay}
               </button>
-              {guide.done ? (
-                <button
-                  type="button"
-                  onClick={restart}
-                  className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
-                >
-                  {t.restart}
-                </button>
-              ) : (
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={pressed}
-                    className="h-20 flex-[2] rounded-2xl bg-blue-600 text-xl font-bold text-white"
-                  >
-                    {t.pressed}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => goToCamera(t.pointCamera)}
-                    className="h-20 flex-1 rounded-2xl border-2 border-zinc-300 text-xl font-bold dark:border-zinc-700"
-                  >
-                    {t.retake}
-                  </button>
-                </div>
-              )}
+              <Feedback key={liveGuide.message} guide={liveGuide} goal={goal} lang={lang} t={t} />
             </>
+          )}
+
+          {liveGuide?.done ? (
+            <button
+              type="button"
+              onClick={restart}
+              className="h-20 rounded-2xl bg-foreground text-2xl font-bold text-background"
+            >
+              {t.restart}
+            </button>
+          ) : (
+            !cameraError &&
+            mic.supported && (
+              <button
+                type="button"
+                onClick={toggleLiveMic}
+                className={`h-16 rounded-2xl text-xl font-bold text-white ${
+                  mic.listening ? "animate-pulse bg-red-600" : "bg-blue-600"
+                }`}
+              >
+                {mic.listening ? t.micStop : t.liveMicChange}
+              </button>
+            )
           )}
         </section>
       )}
@@ -346,12 +560,83 @@ export function KioskGuide() {
   );
 }
 
-/** 사진 위에 눌러야 할 버튼을 빨간 상자로 표시한다. 좌표가 비율이라 사진 크기가 바뀌어도 맞는다. */
-function PressHere({ box, label }: { box: NonNullable<Guide["box"]>; label: string }) {
-  const labelBelow = box.top < 0.12;
+/** 안내가 맞았는지 묻고 저장한다. 저장이 안 돼도 사용자에게는 고맙다고만 한다. */
+function Feedback({ guide, goal, lang, t }: { guide: Guide; goal: string; lang: Lang; t: Text }) {
+  const [sent, setSent] = useState(false);
+
+  function send(correct: boolean) {
+    setSent(true);
+    void fetch("/api/feedback", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        goal,
+        stage: guide.stage,
+        button: guide.button,
+        message: guide.message,
+        correct,
+        mode: "live",
+        lang,
+      }),
+    }).catch(() => {});
+  }
+
+  if (sent) return <p className="text-center text-lg text-zinc-500">{t.feedbackThanks}</p>;
+  return (
+    <div className="flex items-center gap-3">
+      <span className="shrink-0 text-lg">{t.feedbackAsk}</span>
+      <button
+        type="button"
+        onClick={() => send(true)}
+        className="h-12 flex-1 rounded-xl border-2 border-zinc-300 text-lg font-bold dark:border-zinc-700"
+      >
+        {t.feedbackGood}
+      </button>
+      <button
+        type="button"
+        onClick={() => send(false)}
+        className="h-12 flex-1 rounded-xl border-2 border-zinc-300 text-lg font-bold dark:border-zinc-700"
+      >
+        {t.feedbackBad}
+      </button>
+    </div>
+  );
+}
+
+// 1번(지금 누를 버튼)은 빨강, 2·3번은 다음 순서라 덜 눈에 띄는 주황·하늘색으로 그린다.
+const STEP_COLORS = ["#dc2626", "#f59e0b", "#0ea5e9"];
+
+/**
+ * 안내를 받은 사진을 영상 위에 덮고, 그 위에 누를 버튼을 1, 2, 3 번호 상자로 그린다.
+ * 사진과 좌표가 같은 장면이라 휴대폰이 조금 흔들려도 상자가 버튼에서 벗어나지 않는다.
+ * 사진은 영상과 같은 비율로 늘려 그리므로, 비율(0~1) 좌표가 사진 속 버튼에 그대로 겹친다.
+ */
+function AnnotatedShot({ shot, steps, t }: { shot: Frame; steps: Step[]; t: Text }) {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* eslint-disable-next-line @next/next/no-img-element -- 방금 찍은 data URL이라 최적화할 것이 없다 */}
+      <img src={shot.dataUrl} alt="" className="absolute inset-0 h-full w-full" />
+      <div className="absolute inset-0 bg-black/30" />
+      <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-sm text-white">
+        📷 {t.snapshot}
+      </span>
+      {/* 1번이 맨 위에 오도록 거꾸로 그린다. */}
+      {steps
+        .map((step, i) => ({ step, i }))
+        .reverse()
+        .map(({ step, i }) => step.box && <StepMark key={i} box={step.box} n={i + 1} label={i === 0 ? t.pressHere : ""} />)}
+    </div>
+  );
+}
+
+function StepMark({ box, n, label }: { box: NonNullable<Step["box"]>; n: number; label: string }) {
+  const color = STEP_COLORS[n - 1] ?? STEP_COLORS[STEP_COLORS.length - 1];
+  const first = n === 1;
+  // 상자가 사진 위쪽 끝에 붙어 있으면 번호와 글자를 상자 안쪽·아래로 옮겨 잘리지 않게 한다.
+  const nearTop = box.top < 0.08;
   return (
     <div
-      className="pointer-events-none absolute"
+      className="absolute"
       style={{
         left: `${box.left * 100}%`,
         top: `${box.top * 100}%`,
@@ -359,15 +644,54 @@ function PressHere({ box, label }: { box: NonNullable<Guide["box"]>; label: stri
         height: `${box.height * 100}%`,
       }}
     >
-      <div className="absolute -inset-1 animate-ping rounded-lg border-4 border-red-500 opacity-60" />
-      <div className="absolute -inset-1 rounded-lg border-4 border-red-500 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+      {first && (
+        <div className="absolute -inset-1 animate-ping rounded-lg border-4 opacity-60" style={{ borderColor: color }} />
+      )}
+      <div
+        className={`absolute -inset-1 rounded-lg ${first ? "border-4 bg-white/10" : "border-[3px] border-dashed"}`}
+        style={{ borderColor: color }}
+      />
       <span
-        className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-red-600 px-3 py-1 text-base font-bold text-white ${
-          labelBelow ? "top-full mt-2" : "bottom-full mb-2"
-        }`}
+        className={`absolute flex items-center justify-center rounded-full font-black text-white shadow-lg ring-2 ring-white ${
+          first ? "h-10 w-10 text-2xl" : "h-8 w-8 text-lg"
+        } ${nearTop ? "-left-2 top-1" : "-left-3 -top-4"}`}
+        style={{ backgroundColor: color }}
       >
-        {labelBelow ? "▲" : "▼"} {label}
+        {n}
       </span>
+      {label && (
+        <span
+          className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-base font-bold text-white ${
+            nearTop ? "top-full mt-2" : "bottom-full mb-2"
+          }`}
+          style={{ backgroundColor: color }}
+        >
+          {nearTop ? "▲" : "▼"} {label}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** 사진 아래에 누를 순서를 같은 색 번호로 적는다. 사진에서 상자를 못 그린 버튼도 여기에는 나온다. */
+function StepList({ steps, label }: { steps: Step[]; label: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-base text-zinc-500">{label}</span>
+      <ol className="flex flex-wrap items-center gap-2 text-xl font-bold">
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {i > 0 && <span className="text-zinc-400">→</span>}
+            <span
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-lg text-white"
+              style={{ backgroundColor: STEP_COLORS[i] ?? STEP_COLORS[STEP_COLORS.length - 1] }}
+            >
+              {i + 1}
+            </span>
+            <span className={i === 0 ? "" : "text-zinc-500"}>{step.button}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
