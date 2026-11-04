@@ -33,7 +33,10 @@ function fitSize(width, height) {
   // Ollama는 사진 크기와 상관없이 이미지를 안쪽에서 일정 크기로 바꾸고, 모델은 그 크기 기준 좌표를 낸다.
   // 작은 사진을 그대로 보내면 좌표가 어긋나므로, 그 크기 근처로 맞춰 보낼 수 있게 한다.
   const scale = target > 0 ? Math.sqrt(target / (width * height)) : Math.min(1, MAX_SIDE / Math.max(width, height));
-  const round = (n) => Math.max(PATCH, Math.round((n * scale) / PATCH) * PATCH);
+  // --pixels를 줄 때는 실제 앱(app/frame.ts)처럼 28의 배수로 내림한다. 반올림하면 Ollama 상한을 넘어 좌표가 어긋날 수 있고,
+  // 크기가 28 단위만 달라도 모델 답이 달라지므로 앱과 같은 방식으로 재야 점수가 앱의 정확도를 뜻한다.
+  const snap = target > 0 ? Math.floor : Math.round;
+  const round = (n) => Math.max(PATCH, snap((n * scale) / PATCH) * PATCH);
   return { width: round(width), height: round(height) };
 }
 
@@ -190,6 +193,9 @@ for (const [i, item] of items.entries()) {
 }
 
 const overall = summarize(rows);
+// 사용자에게는 이름과 위치가 둘 다 맞아야 길 안내가 된다. 검증 단계가 안내를 거둔 문항(버튼 이름이 빈 것)은 따로 센다.
+const shown = rows.filter((r) => !r.error && r.aiButton !== "");
+const bothCorrect = shown.filter((r) => r.buttonOk && r.positionOk).length;
 const stores = [...new Set(rows.map((r) => r.store))].map((store) => ({
   store,
   ...summarize(rows.filter((r) => r.store === store)),
@@ -201,6 +207,7 @@ console.log(`
 - 위치 정확도: ${percent(overall.positionCorrect, overall.total)} (${overall.positionCorrect}/${overall.total}, 목표 60%)
 - 응답 시간: 평균 ${seconds(overall.meanMs)}, 중앙값 ${seconds(overall.medianMs)}, 최대 ${seconds(overall.maxMs)}, 5초 이내 ${percent(overall.within5s, overall.total - overall.errors)}
 - 답을 못 받은 문항: ${overall.errors}개
+- 안내를 보여 준 문항: ${shown.length}/${rows.length}, 그중 이름·위치 둘 다 맞음 ${bothCorrect}개 (${percent(bothCorrect, shown.length)}) / 틀린 안내 ${shown.length - bothCorrect}개, 안내를 거둔 문항 ${rows.length - shown.length}개
 `);
 // 확신도가 실제로 쓸모 있으려면 high일 때 정답률이 low일 때보다 높아야 한다.
 const levels = ["high", "medium", "low"].map((level) => ({ level, rows: rows.filter((r) => r.confidence === level) })).filter((l) => l.rows.length > 0);
