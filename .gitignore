@@ -41,6 +41,8 @@ yarn-error.log*
 /eval/data/*/images/
 !/eval/data/sample/images/
 /eval/results/
+# 파인튜닝 학습 사진: 일부가 블로그 사진이라 올리지 않는다 (라벨과 스크립트만 올린다)
+/finetune/data/*/images/
 
 # typescript
 *.tsbuildinfo

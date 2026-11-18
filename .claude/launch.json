@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "label-boxes",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["eval/label-server.mjs", "--data", "finetune/data/boxes"],
+      "port": 4173
+    }
+  ]
+}

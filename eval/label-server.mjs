@@ -1,7 +1,7 @@
 // 라벨링 도구 서버: 사진에 정답 버튼 상자를 그려 labels.jsonl을 만든다. 사용법은 eval/README.md 참고.
 // 의존성 없이 Node 기본 모듈만 쓴다. 내 컴퓨터(127.0.0.1)에서만 열린다.
 import { createServer } from "node:http";
-import { appendFile, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { appendFile, readdir, readFile, rename, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -58,6 +58,21 @@ function validate(item) {
   return null;
 }
 
+// 파일을 고치는 요청은 한 번에 하나씩 처리한다. 겹치면 읽은 내용과 쓴 내용이 섞여 줄이 깨졌다.
+let queue = Promise.resolve();
+function exclusive(task) {
+  const run = queue.then(task, task);
+  queue = run.catch(() => {});
+  return run;
+}
+
+/** 임시 파일에 다 쓴 뒤 바꿔 넣어서, 쓰는 도중에 읽어도 반쯤 쓴 파일이 보이지 않게 한다. */
+async function writeLabels(labels) {
+  const tmp = labelFile + ".tmp";
+  await writeFile(tmp, labels.map((l) => JSON.stringify(l)).join("\n") + (labels.length ? "\n" : ""), "utf8");
+  await rename(tmp, labelFile);
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let size = 0;
@@ -109,19 +124,44 @@ const server = createServer(async (req, res) => {
       const item = JSON.parse(await readBody(req));
       const problem = validate(item);
       if (problem) return sendJson(res, 400, { error: problem });
-      const labels = await readLabels();
-      if (labels.some((l) => l.id === item.id)) return sendJson(res, 409, { error: `id가 겹쳐요: ${item.id}` });
-      // BOM 없는 UTF-8, 한 줄에 JSON 하나
-      await appendFile(labelFile, JSON.stringify(item) + "\n", "utf8");
+      const conflict = await exclusive(async () => {
+        const labels = await readLabels();
+        if (labels.some((l) => l.id === item.id)) return true;
+        // BOM 없는 UTF-8, 한 줄에 JSON 하나
+        await appendFile(labelFile, JSON.stringify(item) + "\n", "utf8");
+        return false;
+      });
+      if (conflict) return sendJson(res, 409, { error: `id가 겹쳐요: ${item.id}` });
       return sendJson(res, 200, { ok: true });
+    }
+
+    // 초안 확인: 이미 있는 문항의 버튼 이름·상자를 고치고 draft 표시를 뗀다(파인튜닝용 상자 라벨에서 쓴다).
+    if (req.method === "POST" && url.pathname === "/api/update") {
+      const { id, button, box } = JSON.parse(await readBody(req));
+      if (typeof button !== "string" || button.trim() === "") return sendJson(res, 400, { error: "버튼 이름을 적어 주세요." });
+      if (!Array.isArray(box) || box.length !== 4 || !box.every(Number.isFinite)) return sendJson(res, 400, { error: "상자를 그려 주세요." });
+      const item = await exclusive(async () => {
+        const labels = await readLabels();
+        const found = labels.find((l) => l.id === id);
+        if (!found) return null;
+        found.answer = { ...found.answer, button: button.trim(), box };
+        delete found.draft;
+        await writeLabels(labels);
+        return found;
+      });
+      if (!item) return sendJson(res, 404, { error: `없는 문항: ${id}` });
+      return sendJson(res, 200, { ok: true, item });
     }
 
     if (req.method === "POST" && url.pathname === "/api/delete") {
       const { id } = JSON.parse(await readBody(req));
-      const labels = await readLabels();
-      const kept = labels.filter((l) => l.id !== id);
-      await writeFile(labelFile, kept.map((l) => JSON.stringify(l)).join("\n") + (kept.length ? "\n" : ""), "utf8");
-      return sendJson(res, 200, { ok: true, removed: labels.length - kept.length });
+      const removed = await exclusive(async () => {
+        const labels = await readLabels();
+        const kept = labels.filter((l) => l.id !== id);
+        await writeLabels(kept);
+        return labels.length - kept.length;
+      });
+      return sendJson(res, 200, { ok: true, removed });
     }
 
     res.writeHead(404).end();
