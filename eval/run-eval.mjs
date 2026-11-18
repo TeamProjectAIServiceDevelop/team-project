@@ -203,8 +203,8 @@ const stores = [...new Set(rows.map((r) => r.store))].map((store) => ({
 
 console.log(`
 결과 (${args.name})
-- 버튼 안내 정확도: ${percent(overall.buttonCorrect, overall.total)} (${overall.buttonCorrect}/${overall.total}, 목표 70%)
-- 위치 정확도: ${percent(overall.positionCorrect, overall.total)} (${overall.positionCorrect}/${overall.total}, 목표 60%)
+- 버튼 안내 정확도: ${percent(overall.buttonCorrect, overall.total)} (${overall.buttonCorrect}/${overall.total}, 목표 90%)
+- 위치 정확도: ${percent(overall.positionCorrect, overall.total)} (${overall.positionCorrect}/${overall.total}, 목표 90%)
 - 응답 시간: 평균 ${seconds(overall.meanMs)}, 중앙값 ${seconds(overall.medianMs)}, 최대 ${seconds(overall.maxMs)}, 5초 이내 ${percent(overall.within5s, overall.total - overall.errors)}
 - 답을 못 받은 문항: ${overall.errors}개
 - 안내를 보여 준 문항: ${shown.length}/${rows.length}, 그중 이름·위치 둘 다 맞음 ${bothCorrect}개 (${percent(bothCorrect, shown.length)}) / 틀린 안내 ${shown.length - bothCorrect}개, 안내를 거둔 문항 ${rows.length - shown.length}개
