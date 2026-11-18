@@ -35,8 +35,11 @@ dataloader_num_workers: 0
 ### 출력 (용량이 커서 저장소 밖에 둔다)
 output_dir: C:/Users/User/llamafactory/saves/kiosk-7b-qlora
 logging_steps: 5
-save_strategy: epoch
-save_total_limit: 2
+# 20단계(약 16분)마다 저장한다. 중간에 멈춰도 잃는 것이 적고, resume_from_checkpoint로 이어서 학습할 수 있다.
+# 저장본 하나가 수백 MB라 최근 3개만 남긴다.
+save_strategy: steps
+save_steps: 20
+save_total_limit: 3
 plot_loss: true
 overwrite_output_dir: true
 report_to: none
@@ -54,4 +57,6 @@ bf16: true
 
 ### 확인용
 per_device_eval_batch_size: 1
-eval_strategy: epoch
+# 확인용 85개를 재는 데 몇 분 걸려서 저장 두 번에 한 번만 잰다.
+eval_strategy: steps
+eval_steps: 40
