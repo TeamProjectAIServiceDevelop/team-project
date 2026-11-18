@@ -52,7 +52,7 @@ const stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15);
 await mkdir(path.join(root, "eval", "results"), { recursive: true });
 const summary: string[] = [];
 for (const model of models) {
-  const rows = [];
+  const rows: { id: string; answer: string; ai: string; nameOk: boolean; posOk: boolean; error: string; ms: number }[] = [];
   for (const item of items) {
     const img = images.get(item.image)!;
     const started = performance.now();
