@@ -1,8 +1,183 @@
 # 키오스크 길잡이 (KIOSSON)
 
-어떤 키오스크든 휴대폰 카메라로 비추면, AI가 눌러야 할 버튼을 화면에 표시하고 음성으로 안내하는 모바일 웹 서비스입니다. 기획서는 [자료/팀플기획서-KIOSSON.hwp](자료/팀플기획서-KIOSSON.hwp)에 있습니다.
+어떤 키오스크든 휴대폰 카메라로 비추면, AI가 눌러야 할 버튼을 화면에 표시하고 음성으로 안내하는 모바일 웹 서비스입니다. 키오스크 주문이 어려운 고령자, 저시력자, 외국인을 돕습니다.
 
-**서비스 접속:** https://kiosson.vercel.app/
+- **서비스 접속:** https://kiosson.vercel.app/
+- **기획서:** [자료/기획서/팀플기획서-KIOSSON.hwp](자료/기획서/팀플기획서-KIOSSON.hwp)
+- **구현계획서:** [자료/8조_구현계획.md](자료/8조_구현계획.md)
+- **팀:** 8조 · 정윤서(웹) · 이동건(AI)
+
+## 왜 만드나
+
+키오스크는 3년 새 2.4배로 늘었지만 서울 75세 이상의 키오스크 이용률은 19.1%에 그칩니다. 가장 어려워하는 것은 버튼 찾기와 메뉴 고르기입니다.
+
+| 기존 해결책 | 한계 |
+|---|---|
+| 배리어프리 키오스크 | 기기를 바꿔야 해서 보급이 느림 |
+| 키오스크 연습 앱 | 실제 매장 화면과 다름 |
+| 카메라 AI(사진 설명, 실시간 대화) | 주문 목표와 진행 단계를 기억하지 않고, 누를 위치를 짚어 주지 않음 |
+
+그래서 **키오스크가 아니라 사용자의 휴대폰에서** 돕습니다.
+
+- 앱 설치 없이 링크로 여는 모바일 웹
+- 처음 보는 키오스크 화면도 AI가 읽고 판단
+- 주문 목표를 기억하고 다음 버튼을 하나씩 안내
+
+## 주요 기능
+
+1. **목표 정하기**: 주문할 메뉴를 말하거나(음성 인식), 글자로 적거나, 키오스크 메뉴 화면을 찍어서 AI가 읽어 준 메뉴 중에서 고릅니다.
+2. **실시간 안내**: 카메라로 키오스크 화면을 비추면, 휴대폰이 멈춰 있고 화면이 바뀌었을 때만 자동으로 사진을 보내 분석합니다. 찍기 버튼을 누를 필요가 없습니다.
+3. **버튼 표시**: 이 화면에서 누를 버튼을 최대 3개까지 사진 위에 상자와 1·2·3 번호로 표시합니다.
+4. **음성 안내**: 지금 누를 버튼의 위치와 이름을 한 문장으로 읽어 줍니다. 한국어와 영어를 지원합니다.
+5. **피드백**: 안내가 맞았는지 "맞았어요/틀렸어요"로 받아 DB에 저장합니다. 사진은 저장하지 않습니다.
+
+## 구조
+
+```
+휴대폰(웹) → Vercel(Next.js API) → Cloudflare Tunnel → 3060 PC의 Ollama → Qwen2.5-VL 3B
+```
+
+카메라는 초당 30장이지만 AI는 한 번 답하는 데 몇 초가 걸려서, 장면을 골라 보냅니다.
+
+1. **화면 변화 감지** (휴대폰): 0.5초마다 작게 줄인 흑백 화면을 비교해, 휴대폰이 멈춰 있고 장면이 바뀌었을 때만 보냅니다.
+2. **장면 한 장 전송** (휴대폰 → 웹 서버): 영상이 아닌 사진 한 장을, 모델이 쓰는 크기로 미리 맞춰 보내 좌표가 밀리지 않게 합니다.
+3. **판단** (AI): 목표와 지금까지 누른 버튼을 보고, 이 화면에서 누를 버튼의 이름과 순서, 안내문을 JSON으로 받습니다.
+4. **위치 찾기** (AI): 고른 버튼들의 상자 좌표(`bbox_2d`)를 따로 받습니다. 한 번에 받으면 상자가 부정확해서 나눴습니다. 위치 찾기가 실패해도 음성 안내는 그대로 합니다.
+5. **표시·음성 안내** (휴대폰): AI가 본 사진 위에 1·2·3 상자를 그리고 안내문을 읽어 줍니다.
+
+웹과 AI는 요청·응답 형식([lib/guide.ts](lib/guide.ts)) 하나로만 만납니다. 그래서 AI 서버 없이도 목업 모드로 화면을 따로 개발할 수 있습니다.
+
+| 경로 | 내용 |
+|---|---|
+| [app/kiosk-guide.tsx](app/kiosk-guide.tsx) | 화면 전체(목표 입력 → 메뉴 찍기 → 실시간 안내) |
+| [app/live-camera.ts](app/live-camera.ts) | 화면 변화를 보고 분석할 장면을 고름 |
+| [app/frame.ts](app/frame.ts) | 카메라 화면을 모델에 맞는 크기(28의 배수, 약 98만 픽셀)로 캡처 |
+| [app/speech.ts](app/speech.ts) | 음성 인식과 음성 안내(Web Speech API) |
+| [app/api/guide/route.ts](app/api/guide/route.ts) | `POST /api/guide`: 다음에 누를 버튼 안내 |
+| [app/api/menu/route.ts](app/api/menu/route.ts) | `POST /api/menu`: 메뉴 화면에서 메뉴 읽기 |
+| [app/api/feedback/route.ts](app/api/feedback/route.ts) | `POST /api/feedback`: 피드백 저장(Neon Postgres) |
+| [lib/guide.ts](lib/guide.ts) | 요청·응답 형식, 프롬프트, 모델 출력 검증 |
+| [lib/ollama.ts](lib/ollama.ts) | Ollama 호출 |
+| [db/schema.sql](db/schema.sql) | 피드백 테이블 |
+
+**기술 스택:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Ollama + Qwen2.5-VL 3B, Neon Postgres, Vercel
+
+## AI 모델
+
+**Qwen2.5-VL 3B + QLoRA 파인튜닝**으로 확정했습니다. 모델은 Hugging Face의 원본 [`Qwen/Qwen2.5-VL-3B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct)를 받아 학습·평가하고, 학습한 모델을 Ollama에 올려 서비스합니다.
+
+| 기준 (RTX 3060 12GB) | 3B (확정) | 7B | 72B |
+|---|---|---|---|
+| 실행 | 가능 | 가능 | 불가 |
+| LoRA 학습 | QLoRA(4비트) 여유 | QLoRA도 빠듯, 16비트 불가 | 불가 |
+| 프롬프트만 쓴 성능 | 7B보다 낮을 것으로 예상 | 위치 57.1% (목표 90% 미달) | — |
+| 결정 | 학습해서 서비스에 사용 | 제외 (학습 어려움) | 제외 |
+
+처음에는 7B를 학습 없이 프롬프트만으로 쓰려 했지만 1차 측정에서 정확도가 목표에 못 미쳤습니다. 프롬프트 개선만으로는 한계가 있다고 보고 파인튜닝을 앞당겼는데, 3060에서 7B는 학습이 어려워 **모델 자체 성능은 한 단계 낮추는 대신 우리 데이터로 직접 학습할 수 있는 3B**를 골랐습니다. 이 선택이 맞는지는 학습에 쓰지 않은 매장 사진으로 3B 원본 · 3B + QLoRA · 7B 원본을 비교해 확인합니다.
+
+학습한 모델을 앱에 넣는 방법은 [자료/파인튜닝_모델_적용_가이드.md](자료/파인튜닝_모델_적용_가이드.md)를 봅니다.
+
+## 진행 상황 (2026-11-18 중간발표 기준)
+
+**완료**
+
+- 목표 입력(말하기 · 글자 · 메뉴 화면 찍어 고르기)
+- 실시간 카메라 + 화면 변화 감지 자동 전송
+- 2단계 안내(판단 → 위치), 사진 위 1·2·3 상자
+- 음성 안내(같은 안내는 한 번만 읽기), 누른 버튼 기록 → 다음 요청에 반영
+- 피드백 저장(Neon), 사진은 저장 안 함
+- Vercel 배포 (https://kiosson.vercel.app/)
+
+**진행 중**
+
+- 틀린 안내 거르기: 상자 부분을 잘라 그 버튼이 맞는지 다시 묻는 검증 단계를 실험 중입니다. 틀린 안내가 22~23개에서 5~12개로 줄었지만 맞는 안내도 약 8개가 걸러져, 조각의 글자를 읽어 버튼 이름과 비교하는 방식을 시험하고 있습니다.
+- QLoRA 파인튜닝: 메가커피 데이터로 1차 학습 중입니다(학습·변환·연결 과정 확인용).
+- AI 서버: 임시 Tunnel로 연결했고, 고정 주소가 필요합니다.
+
+### 1차 측정
+
+49문항 · Qwen2.5-VL **7B** · 프롬프트만(학습 없음)
+
+| 지표 | 결과 | 목표 |
+|---|---|---|
+| 버튼 안내 정확도 | **73.5%** (36/49) | 90% 이상 |
+| 위치 정확도 | **57.1%** (28/49) | 90% 이상 |
+| 응답 시간 | 평균 **약 3초** | 5초 이내 ✅ |
+
+- 이름과 위치가 둘 다 맞은 것은 53~55%뿐입니다. 이름은 맞혀도 상자가 다른 버튼에 그려지는 경우가 많습니다.
+- 한 브랜드 키오스크에서 어려운 화면을 일부러 많이 넣어 직접 라벨링해서, 실제보다 낮게 나왔을 수 있습니다.
+
+### 데이터
+
+지금 데이터는 49문항 · 사진 9장(메가커피 한 브랜드, 키오스크 2종)뿐이고 1차 학습에 써서 평가에는 쓸 수 없습니다. 그래서 새로 모읍니다.
+
+1. **수집**: 매장 허락을 받고 주문 처음부터 결제까지 영상으로 찍은 뒤, 화면이 바뀔 때마다 장면을 이미지로 추출합니다. 두 사람이 매장 5곳 이상씩, 다른 업종 키오스크도 넣고 각도·반사·흐림을 섞습니다.
+2. **정리**: 라벨링 도구로 정답 버튼을 표시하고 서로 교차 검토합니다. **매장 단위로 학습용·평가용을 나눠** 점수가 부풀지 않게 하고, 얼굴·카드 정보가 찍힌 사진은 뺍니다.
+3. **목표**: 11월 말까지 매장 10곳 · 사진 200장 이상
+
+## 앞으로 할 일
+
+| 할 일 | 내용 | 담당 |
+|---|---|---|
+| 정확도 90% | 다른 매장 데이터를 더해 원본 3B부터 다시 QLoRA 학습 | 이동건 |
+| 틀린 안내 거르기 | 검증 단계 개선, 걸러진 안내는 상자 없이 다시 분석 | 공동 |
+| AI 서버 안정화 | 임시 Tunnel 주소 → 고정 주소, 상용 API 비상 경로 마련 | 이동건 |
+| 실기기 테스트 | Android · iPhone에서 확인, 화면 변화 기준값을 실제 매장에서 조정 | 정윤서 |
+| 흐린 장면 거르기 | 약한 흐림에도 정답이 절반 이하로 떨어짐 → 선명한 프레임만 전송 | 공동 |
+| 실패할 때 안내 | 검증에서 걸러지면 상자 숨김, 계속 실패하면 "조금 더 가까이 비춰 주세요" | 공동 |
+| 편의 · 동의 | 말하는 속도 조절, 완료 화면의 누른 단계 목록, 피드백 저장 동의 | 정윤서 |
+
+| 일정 | 내용 |
+|---|---|
+| 13주 (~11/29) | 다른 매장 데이터 수집 · 재학습 · 실기기 테스트 |
+| 12월 2일 · Sprint 3 | 개선 전후 비교, 최종 배포 · 발표 |
+
+## 실행 방법
+
+Node.js가 필요합니다.
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+브라우저에서 http://localhost:3000 을 엽니다. localhost에서는 PC 웹캠으로 카메라를 쓸 수 있습니다.
+
+### 환경변수 (`.env.local`)
+
+| 이름 | 설명 |
+|---|---|
+| `OLLAMA_URL` | Ollama 주소. 기본값 `http://localhost:11434`. 다른 PC에서 돌리면 Cloudflare Tunnel 주소를 넣습니다. |
+| `OLLAMA_MODEL` | 모델 이름. 기본값 `qwen2.5vl:3b` |
+| `KIOSK_AI_MOCK` | `1`로 두면 AI 서버 없이 정해진 가짜 안내로 화면 흐름만 확인합니다. |
+| `DATABASE_URL` | 피드백을 저장할 Neon Postgres 연결 문자열. 비워 두면 저장하지 않습니다. |
+
+### AI 서버 띄우기
+
+[Ollama](https://ollama.com)를 설치하고 모델을 받습니다(약 3GB).
+
+```bash
+ollama pull qwen2.5vl:3b
+```
+
+GPU가 있는 PC에서 실행해야 실시간으로 쓸 수 있는 속도가 나옵니다. 휴대폰 연결(Tunnel + Vercel)과 LoRA 파인튜닝은 [자료/AI_구현_가이드라인.md](자료/AI_구현_가이드라인.md)를 봅니다.
+
+### 피드백 DB
+
+Neon 콘솔의 SQL Editor에서 [db/schema.sql](db/schema.sql)을 한 번 실행하고, 연결 문자열을 `DATABASE_URL`에 넣습니다.
+
+### 휴대폰에서 테스트
+
+휴대폰 카메라는 HTTPS에서만 열립니다. 실기기 테스트는 Vercel 배포 주소(https://kiosson.vercel.app/)로 합니다. Vercel 환경변수의 `OLLAMA_URL`에는 Tunnel 주소를 넣습니다.
+
+## 알려진 한계
+
+- 화면 변화 기준값([app/live-camera.ts](app/live-camera.ts)의 `MOVING`, `CHANGED`)은 추정치라 실제 매장에서 조정해야 합니다.
+- 목업 모드(`KIOSK_AI_MOCK=1`)는 정해진 답만 돌려주므로 실시간 모드에서는 첫 단계 안내만 반복됩니다. 단계 진행은 실제 모델로 확인합니다.
+- 임시 Tunnel 주소는 cloudflared를 다시 켤 때마다 바뀝니다. 바뀌면 Vercel 환경변수를 고치고 다시 배포합니다.
+- Ollama 0.40.15 · 0.40.16에서는 사진을 한 번 처리한 뒤 다음 사진부터 모델이 `888…`만 내는 문제가 있습니다. 앱에는 0.1~0.3초 만에 "화면을 잘 읽지 못했어요"가 뜹니다. 정상 동작하는 버전으로 고정하고 Ollama 자동 업데이트를 끕니다.
+- 지금 데이터는 한 브랜드(메가커피) 키오스크뿐이라, 다른 키오스크에서의 정확도는 아직 확인하지 못했습니다.
 
 ## 브랜치 규칙
 
@@ -20,41 +195,12 @@
 
 두 사람이 만나는 지점은 웹 서버와 AI 서버 사이의 요청·응답 형식([lib/guide.ts](lib/guide.ts))입니다. 이 형식을 바꿀 때는 먼저 서로 알립니다.
 
----
+## 자료
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| 문서 | 내용 |
+|---|---|
+| [자료/8조_구현계획.md](자료/8조_구현계획.md) | MVP·완성본 구현 계획, 일정, 리스크 |
+| [자료/AI_구현_가이드라인.md](자료/AI_구현_가이드라인.md) | Ollama 실행, Tunnel 연결, LoRA 파인튜닝 |
+| [자료/파인튜닝_모델_적용_가이드.md](자료/파인튜닝_모델_적용_가이드.md) | 파인튜닝 모델 평가(HF 원본 기준), 병합, Ollama 등록, 앱 연결 |
+| [자료/기획서/](자료/기획서/) | 기획서(HWP, 초안, 양식)와 그림 |
+| [자료/중간발표/](자료/중간발표/) | 중간발표 PPT와 대본 |
