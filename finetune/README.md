@@ -86,5 +86,20 @@ python finetune\eval_button_3b.py --adapter <어댑터 폴더>
 - 종류별 이름+위치: 화면 안 메뉴 6→11/15, 다른 탭 이동 0→13/20, 결제하기·전체삭제·처음으로 2→6/6.
 - 기본 3B는 JSON 모양을 못 지켜서 `"button"` 값만 뽑아 채점했다(앱은 Ollama가 형식을 강제하므로 조금 더 나을 수 있다).
 - 남은 오류: 글자 오독(샤인머스캣→사임머스캣, 치즈케익→치즈케이크), 같은 탭 안 하위 탭 대신 상단 탭을 고름.
-- 앱에서 쓰려면: 앱이 보내는 사진도 31만 픽셀로 줄여야 하고(`app/frame.ts`의 `TARGET_PIXELS`), 3B는 Ollama 0.40.12에서 사진을 못 읽어 최신 Ollama로 다시 시험하거나 llama-server로 서빙해야 한다.
+- 앱에서 쓰기(2026-11-26 확인): 합쳐서 GGUF로 바꿔 **Ollama 0.40.16**에 `kiosk-3b-button`으로 넣으니 사진을 정상으로 읽었다(0.40.12의 "8888…" 문제 없음).
+  앱 사진 크기는 **바꾸지 않는다(98만 그대로)**. Ollama는 작은 사진을 약 1,000토큰(784×1064 등)까지 키워서 넣고 좌표도 그 크기로 내기 때문에,
+  31만 픽셀로 보내면 앱이 좌표를 보낸 크기로 계산해서 상자를 모두 버린다(위치 0/41). 98만으로 보내면 키우지 않아 좌표가 맞는다.
+- Ollama에서 앱 코드 그대로 채점(`finetune/eval-ollama.ts`, 98만 픽셀 확인용 41문항, `data/train/eval-ollama-*.json`):
+
+  | 모델 | 이름 | 이름+위치 | 평균 |
+  | --- | --- | --- | --- |
+  | `qwen2.5vl:7b` (지금 앱) | 16 | 14 | 3.4초 |
+  | `kiosk-3b-base` (원본 3B 변환) | 14 | 12 | 1.6초 |
+  | `kiosk-3b-button` (학습한 3B) | **33** | **33** | 1.6초 |
+
+  ```powershell
+  python finetune\merge_lora.py <3B snapshot> <어댑터> merged   # 그 뒤 "Ollama에 넣기"와 같은 순서, Modelfile의 FROM만 3B 파일로
+  ollama create kiosk-3b-button -f Modelfile
+  $env:OLLAMA_MODEL = "kiosk-3b-button"; node_modules\.bin\jiti finetune\eval-ollama.ts finetune/data/train
+  ```
 - 주의: `paged_adamw_8bit`로 하니 GPU가 공유 메모리로 넘친 상태에서 체크포인트 저장 중 멈추고 블루스크린(0x1E)이 두 번 났다. `adamw_torch`로 바꾼 뒤에는 저장 10번 모두 정상이었다.
