@@ -86,7 +86,9 @@ python finetune\eval_button_3b.py --adapter <어댑터 폴더>
 - 종류별 이름+위치: 화면 안 메뉴 6→11/15, 다른 탭 이동 0→13/20, 결제하기·전체삭제·처음으로 2→6/6.
 - 기본 3B는 JSON 모양을 못 지켜서 `"button"` 값만 뽑아 채점했다(앱은 Ollama가 형식을 강제하므로 조금 더 나을 수 있다).
 - 남은 오류: 글자 오독(샤인머스캣→사임머스캣, 치즈케익→치즈케이크), 같은 탭 안 하위 탭 대신 상단 탭을 고름.
-- 앱에서 쓰기(2026-11-26 확인): 합쳐서 GGUF로 바꿔 **Ollama 0.40.16**에 `kiosk-3b-button`으로 넣으니 사진을 정상으로 읽었다(0.40.12의 "8888…" 문제 없음).
+- 앱에서 쓰기(2026-11-26 확인): 합쳐서 GGUF로 바꿔 Ollama(0.40.16)에 `kiosk-3b-button`으로 넣고, 앱은 `OLLAMA_MODEL`만 바꿔 그대로 동작한다(앱 코드 변경 없음).
+  **비전 파일(mmproj)은 `--outtype f32`로 변환해야 한다.** f16이면 GPU에서 사진에 따라 "8888…"만 내거나(JSON 강제 시 빈 답) 답이 끊긴다.
+  같은 사진도 JPEG로 다시 저장하기만 하면 깨졌고, CPU로 돌리면 정상, f32 mmproj로 바꾸면 GPU에서도 정상이었다. 학교 PC의 3B "8888…"도 같은 원인일 가능성이 크다.
   앱 사진 크기는 **바꾸지 않는다(98만 그대로)**. Ollama는 작은 사진을 약 1,000토큰(784×1064 등)까지 키워서 넣고 좌표도 그 크기로 내기 때문에,
   31만 픽셀로 보내면 앱이 좌표를 보낸 크기로 계산해서 상자를 모두 버린다(위치 0/41). 98만으로 보내면 키우지 않아 좌표가 맞는다.
 - Ollama에서 앱 코드 그대로 채점(`finetune/eval-ollama.ts`, 98만 픽셀 확인용 41문항, `data/train/eval-ollama-*.json`):
@@ -94,11 +96,17 @@ python finetune\eval_button_3b.py --adapter <어댑터 폴더>
   | 모델 | 이름 | 이름+위치 | 평균 |
   | --- | --- | --- | --- |
   | `qwen2.5vl:7b` (지금 앱) | 16 | 14 | 3.4초 |
-  | `kiosk-3b-base` (원본 3B 변환) | 14 | 12 | 1.6초 |
-  | `kiosk-3b-button` (학습한 3B) | **33** | **33** | 1.6초 |
+  | `kiosk-3b-base` (원본 3B 변환) | 13 | 11 | 1.8초 |
+  | `kiosk-3b-button` (학습한 3B) | **32** | **32** | 1.9초 |
+
+  (3B 두 줄은 f32 mmproj로 잰 값. 7B는 Ollama에서 받은 그대로.)
 
   ```powershell
-  python finetune\merge_lora.py <3B snapshot> <어댑터> merged   # 그 뒤 "Ollama에 넣기"와 같은 순서, Modelfile의 FROM만 3B 파일로
+  python finetune\merge_lora.py <3B snapshot> <어댑터> merged
+  python llama.cpp\convert_hf_to_gguf.py merged --outtype f16 --outfile model-f16.gguf
+  python llama.cpp\convert_hf_to_gguf.py merged --mmproj --outtype f32 --outfile mmproj-f32.gguf   # f16 금지
+  & "$env:LOCALAPPDATA\Programs\Ollama\lib\ollama\llama-quantize.exe" model-f16.gguf model-q4km.gguf Q4_K_M
+  # Modelfile: FROM ./model-q4km.gguf / FROM ./mmproj-f32.gguf / qwen2.5vl의 TEMPLATE, SYSTEM, PARAMETER temperature 0.0001
   ollama create kiosk-3b-button -f Modelfile
   $env:OLLAMA_MODEL = "kiosk-3b-button"; node_modules\.bin\jiti finetune\eval-ollama.ts finetune/data/train
   ```

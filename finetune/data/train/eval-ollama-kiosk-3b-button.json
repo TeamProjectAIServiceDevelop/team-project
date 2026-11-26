@@ -1,5 +1,5 @@
 {
- "summary": "kiosk-3b-button: 이름 33/41, 이름+위치 33/41, 오류 0, 평균 1.6초",
+ "summary": "kiosk-3b-button: 이름 32/41, 이름+위치 32/41, 오류 0, 평균 1.9초",
  "rows": [
   {
    "image": "images/IMG_1623.jpg",
@@ -8,7 +8,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 3878
+   "ms": 4763
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -17,7 +17,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2009
+   "ms": 2399
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -26,7 +26,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1953
+   "ms": 2328
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -35,7 +35,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2009
+   "ms": 2545
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -44,7 +44,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2000
+   "ms": 2395
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -53,7 +53,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1925
+   "ms": 2289
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -62,7 +62,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1861
+   "ms": 2219
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -71,7 +71,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2029
+   "ms": 2431
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -80,7 +80,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2018
+   "ms": 2371
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -89,7 +89,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 976
+   "ms": 1113
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -98,7 +98,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 938
+   "ms": 1097
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -107,7 +107,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1371
+   "ms": 1599
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -116,7 +116,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1379
+   "ms": 1625
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -125,7 +125,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1379
+   "ms": 1590
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -134,7 +134,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1354
+   "ms": 1597
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -143,16 +143,16 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1400
+   "ms": 1576
   },
   {
    "image": "images/IMG_1623.jpg",
    "answer": "푸드",
-   "ai": "푸드",
-   "nameOk": true,
-   "posOk": true,
+   "ai": "커피",
+   "nameOk": false,
+   "posOk": false,
    "error": "",
-   "ms": 1354
+   "ms": 1135
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -161,7 +161,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1364
+   "ms": 1566
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -170,7 +170,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1391
+   "ms": 1639
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -179,7 +179,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1559
+   "ms": 1837
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -188,7 +188,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1412
+   "ms": 1622
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -197,7 +197,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1354
+   "ms": 1639
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -206,7 +206,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 3437
+   "ms": 4266
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -215,7 +215,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2020
+   "ms": 2381
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -224,7 +224,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2038
+   "ms": 2297
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -233,7 +233,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1942
+   "ms": 2358
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -242,7 +242,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2162
+   "ms": 2386
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -251,7 +251,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1923
+   "ms": 2490
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -260,7 +260,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 933
+   "ms": 1113
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -269,16 +269,16 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1336
+   "ms": 1585
   },
   {
    "image": "images/IMG_1627.jpg",
    "answer": "베이커리",
-   "ai": "디저트",
+   "ai": "푸드",
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 939
+   "ms": 1112
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -287,7 +287,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 934
+   "ms": 1113
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -296,7 +296,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 888
+   "ms": 1066
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -305,7 +305,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 895
+   "ms": 1036
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -314,7 +314,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1336
+   "ms": 1553
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -323,7 +323,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1538
+   "ms": 1648
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -332,7 +332,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1087
+   "ms": 1156
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -341,7 +341,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1494
+   "ms": 1600
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -350,7 +350,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1706
+   "ms": 1739
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -359,7 +359,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1726
+   "ms": 1605
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -368,7 +368,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1542
+   "ms": 1632
   }
  ]
 }

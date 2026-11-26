@@ -1,14 +1,14 @@
 {
- "summary": "kiosk-3b-base: 이름 14/41, 이름+위치 12/41, 오류 0, 평균 1.6초",
+ "summary": "kiosk-3b-base: 이름 13/41, 이름+위치 11/41, 오류 0, 평균 1.8초",
  "rows": [
   {
    "image": "images/IMG_1623.jpg",
    "answer": "하트 뿅!_레몬셔벗 딸기 스무디",
-   "ai": "하트 뿅!_레몬셔벗 딸기 스무디",
-   "nameOk": true,
-   "posOk": true,
+   "ai": "레몬셔벗 딸기 스무디",
+   "nameOk": false,
+   "posOk": false,
    "error": "",
-   "ms": 8324
+   "ms": 6744
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -17,7 +17,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2085
+   "ms": 3289
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -26,7 +26,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1098
+   "ms": 1118
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -35,7 +35,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1998
+   "ms": 2159
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -44,7 +44,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2066
+   "ms": 2210
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -53,7 +53,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2048
+   "ms": 2224
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -62,7 +62,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2014
+   "ms": 2055
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -71,7 +71,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1078
+   "ms": 1094
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -80,7 +80,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2106
+   "ms": 2143
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -89,7 +89,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1073
+   "ms": 1114
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -98,7 +98,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1043
+   "ms": 1168
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -107,7 +107,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 965
+   "ms": 1032
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -116,7 +116,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1026
+   "ms": 1118
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -125,16 +125,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1050
-  },
-  {
-   "image": "images/IMG_1623.jpg",
-   "answer": "커피",
-   "ai": "스무디&주스",
-   "nameOk": false,
-   "posOk": false,
-   "error": "",
-   "ms": 1140
+   "ms": 1127
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -143,20 +134,11 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1055
+   "ms": 1135
   },
   {
    "image": "images/IMG_1623.jpg",
-   "answer": "푸드",
-   "ai": "스무디&주스",
-   "nameOk": false,
-   "posOk": false,
-   "error": "",
-   "ms": 1140
-  },
-  {
-   "image": "images/IMG_1623.jpg",
-   "answer": "디카페인",
+   "answer": "커피",
    "ai": "메뉴 탭",
    "nameOk": false,
    "posOk": false,
@@ -165,12 +147,30 @@
   },
   {
    "image": "images/IMG_1623.jpg",
+   "answer": "푸드",
+   "ai": "스무디&주스",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1157
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "디카페인",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1043
+  },
+  {
+   "image": "images/IMG_1623.jpg",
    "answer": "커피",
    "ai": "메뉴 탭",
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 980
+   "ms": 1029
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -179,7 +179,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1517
+   "ms": 1633
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -188,7 +188,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1028
+   "ms": 1066
   },
   {
    "image": "images/IMG_1623.jpg",
@@ -197,7 +197,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 995
+   "ms": 1035
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -206,7 +206,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 3714
+   "ms": 4245
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -215,7 +215,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2127
+   "ms": 2482
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -224,7 +224,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1017
+   "ms": 1313
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -233,7 +233,7 @@
    "nameOk": true,
    "posOk": false,
    "error": "",
-   "ms": 1994
+   "ms": 2538
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -242,7 +242,7 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 1933
+   "ms": 2532
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -251,16 +251,16 @@
    "nameOk": true,
    "posOk": true,
    "error": "",
-   "ms": 2067
+   "ms": 2559
   },
   {
    "image": "images/IMG_1627.jpg",
    "answer": "베이커리",
-   "ai": "메뉴",
+   "ai": "메뉴 탭",
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1006
+   "ms": 1315
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -269,7 +269,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 966
+   "ms": 1148
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -278,7 +278,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1130
+   "ms": 1429
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -287,7 +287,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1013
+   "ms": 1272
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -296,7 +296,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 985
+   "ms": 1236
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -305,7 +305,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1077
+   "ms": 1357
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -314,7 +314,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1015
+   "ms": 1425
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -323,7 +323,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1145
+   "ms": 1556
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -332,7 +332,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 970
+   "ms": 1216
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -341,7 +341,7 @@
    "nameOk": true,
    "posOk": false,
    "error": "",
-   "ms": 1999
+   "ms": 2519
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -350,7 +350,7 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1020
+   "ms": 1320
   },
   {
    "image": "images/IMG_1627.jpg",
@@ -359,16 +359,16 @@
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 1075
+   "ms": 1353
   },
   {
    "image": "images/IMG_1627.jpg",
    "answer": "처음으로",
-   "ai": "메뉴",
+   "ai": "메뉴 탭",
    "nameOk": false,
    "posOk": false,
    "error": "",
-   "ms": 944
+   "ms": 1270
   }
  ]
 }
