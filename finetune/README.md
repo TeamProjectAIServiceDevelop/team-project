@@ -61,3 +61,30 @@ python llama.cpp\convert_hf_to_gguf.py merged --mmproj --outtype f16 --outfile m
 # Modelfile: FROM ./model-q4km.gguf / FROM ./mmproj.gguf / 기존 qwen2.5vl:7b의 TEMPLATE
 ollama create kiosk-7b-ft -f Modelfile
 ```
+
+## 3B를 8GB GPU에서 학습 (집 PC, RTX 4060 Ti 8GB)
+
+발표는 3B로 할 계획이라 같은 데이터 형식으로 3B를 학습했다. 8GB에 맞추려고 사진을 31만 픽셀로 줄이고, 좌표도 그 크기로 다시 만든다.
+
+```powershell
+# 1. 데이터 (사진은 finetune/data/boxes/images/에 22장. jiti는 Node 20에서 .ts를 실행하려고 쓴다)
+$env:TRAIN_PIXELS = "313600"; $env:TRAIN_OUT = "train-3b"; node_modules\.bin\jiti finetune\build-train.ts
+# 2. 학습 (약 50분)
+llamafactory-cli train finetune\kiosk_qlora_3b_8gb.yaml
+# 3. 평가: 기본 3B와 학습한 3B를 확인용 85문항으로 앱과 같은 순서(1단계 → 이름이 맞으면 2단계)로 채점
+python finetune\eval_button_3b.py --adapter <어댑터 폴더>
+```
+
+결과(2026-11-26, 확인용 사진 IMG_1623·IMG_1627, `data/train-3b/eval_button_3b.json`):
+
+| | 기본 3B | 학습한 3B |
+| --- | --- | --- |
+| 1단계 버튼 이름 (41) | 12 | 32 |
+| 이름+위치 (41) | 8 | 30 |
+| 2단계 상자 (90) | 37 | 84 |
+
+- 종류별 이름+위치: 화면 안 메뉴 6→11/15, 다른 탭 이동 0→13/20, 결제하기·전체삭제·처음으로 2→6/6.
+- 기본 3B는 JSON 모양을 못 지켜서 `"button"` 값만 뽑아 채점했다(앱은 Ollama가 형식을 강제하므로 조금 더 나을 수 있다).
+- 남은 오류: 글자 오독(샤인머스캣→사임머스캣, 치즈케익→치즈케이크), 같은 탭 안 하위 탭 대신 상단 탭을 고름.
+- 앱에서 쓰려면: 앱이 보내는 사진도 31만 픽셀로 줄여야 하고(`app/frame.ts`의 `TARGET_PIXELS`), 3B는 Ollama 0.40.12에서 사진을 못 읽어 최신 Ollama로 다시 시험하거나 llama-server로 서빙해야 한다.
+- 주의: `paged_adamw_8bit`로 하니 GPU가 공유 메모리로 넘친 상태에서 체크포인트 저장 중 멈추고 블루스크린(0x1E)이 두 번 났다. `adamw_torch`로 바꾼 뒤에는 저장 10번 모두 정상이었다.

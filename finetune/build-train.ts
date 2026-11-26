@@ -8,13 +8,17 @@
 // - 확인용 사진(screens.json의 val_screen_ids)은 kiosk_val.json으로만 간다. 49문항 평가 사진(eval/data/mega)은 쓰지 않는다.
 //
 // 실행: node finetune/build-train.ts
+// 작은 GPU(8GB)용: 사진 크기 상한과 출력 폴더를 바꿀 수 있다. 좌표도 그 크기 기준으로 다시 계산된다.
+//   PowerShell: $env:TRAIN_PIXELS = "313600"; $env:TRAIN_OUT = "train-3b"; node finetune/build-train.ts
+//   이때 학습 설정의 image_max_pixels도 같은 값으로 두고, 앱도 같은 크기로 보내야 좌표가 맞는다.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import sharp from "sharp";
 
 const root = path.resolve(import.meta.dirname, "..");
-const outDir = path.join(root, "finetune", "data", "train");
+const outDir = path.join(root, "finetune", "data", process.env.TRAIN_OUT || "train");
+const MAX_PIXELS = Number(process.env.TRAIN_PIXELS) || 980_000;
 const g = await import(pathToFileURL(path.join(root, "lib", "guide.ts")).href);
 
 type Box = [number, number, number, number];
@@ -35,7 +39,7 @@ const pick = <T,>(xs: T[]) => xs[Math.floor(rand() * xs.length)];
 const shuffle = <T,>(xs: T[]) => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 const fit = (w: number, h: number) => {
-  const s = Math.sqrt(980_000 / (w * h));
+  const s = Math.sqrt(MAX_PIXELS / (w * h));
   const f = (n: number) => Math.max(28, Math.floor((n * s) / 28) * 28);
   return { width: f(w), height: f(h) };
 };
