@@ -37,6 +37,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# 평가: 실제 사진과 실행 결과는 올리지 않는다 (labels.jsonl과 시험용 sample은 올린다)
+/eval/data/*/images/
+!/eval/data/sample/images/
+/eval/results/
+# 파인튜닝 학습 사진: 일부가 블로그 사진이라 올리지 않는다 (라벨과 스크립트만 올린다)
+/finetune/data/*/images/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

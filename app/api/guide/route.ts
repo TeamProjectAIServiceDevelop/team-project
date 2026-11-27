@@ -1,9 +1,15 @@
+import sharp from "sharp";
 import {
   attachBoxes,
   buildLocateMessages,
   buildMessages,
+  buildVerifyMessages,
+  cropRegion,
   guideSchema,
   parseGuide,
+  parseVerify,
+  rejectGuide,
+  verifySchema,
   type Guide,
   type GuideRequest,
   type Step,
@@ -11,6 +17,8 @@ import {
 import { AiError, chat } from "@/lib/ollama";
 
 const MOCK = process.env.KIOSK_AI_MOCK === "1";
+// 검증 단계는 아직 실험 중이라 기본은 꺼 둔다. 켜려면 KIOSK_VERIFY=1.
+const VERIFY = process.env.KIOSK_VERIFY === "1";
 
 export async function POST(request: Request) {
   const req = readRequest(await request.json().catch(() => null));
@@ -27,7 +35,7 @@ export async function POST(request: Request) {
     throw e;
   }
 
-  const guide = parseGuide(content);
+  const guide = parseGuide(content, req.lang);
   if (!guide) {
     return Response.json({ error: "화면을 잘 읽지 못했어요. 다시 비춰 주세요." }, { status: 502 });
   }
@@ -36,10 +44,37 @@ export async function POST(request: Request) {
   // 2단계: 고른 버튼들의 위치를 한 번에 찾는다. 실패해도 음성 안내는 할 수 있으니 상자 없이 돌려준다.
   try {
     const located = await chat(buildLocateMessages(req.image, guide.steps));
-    return Response.json(attachBoxes(guide, located, req.width, req.height));
+    // 3단계: 첫 버튼의 상자 안에 정말 그 버튼이 있는지 확인한다.
+    return Response.json(await verify(attachBoxes(guide, located, req.width, req.height), req));
   } catch (e) {
     if (e instanceof AiError) return Response.json(guide);
     throw e;
+  }
+}
+
+/**
+ * 3단계(검증): 지금 누를 버튼(steps[0])의 상자 부분만 잘라서 그 버튼이 맞는지 다시 묻고, 아니라고 하면 안내를 거둔다.
+ * 틀린 상자를 보여 주는 것이 안내를 잠깐 거르는 것보다 나쁘다. 검증 자체가 실패하면 안내는 그대로 돌려준다.
+ * KIOSK_VERIFY=1일 때만 동작한다. 49문항 평가에서 틀린 안내는 줄지만(22→12개) 맞는 안내도 거른다(27→18개).
+ * 예/아니오 질문은 비슷한 칸이 나란한 곳(결제 로고 등)에서 쉽게 "예"라고 답해 11개를 못 걸렀다.
+ * 조각의 글자를 읽어 이름과 비교하는 방식도 시험했지만, 7B가 잘라 낸 한글을 잘못 읽어 맞는 안내를 훨씬 많이 걸러서 쓰지 않는다(자료/이동건-작업메모.md).
+ */
+async function verify(guide: Guide, req: GuideRequest): Promise<Guide> {
+  const first = guide.steps[0];
+  if (!VERIFY || !first?.box) return guide;
+  try {
+    const source = sharp(Buffer.from(req.image, "base64"));
+    const { width, height } = await source.metadata();
+    if (!width || !height) return guide;
+    const crop = await source
+      .extract(cropRegion(first.box, width, height))
+      .resize({ width: 448 })
+      .jpeg({ quality: 90 })
+      .toBuffer();
+    const answer = parseVerify(await chat(buildVerifyMessages(crop.toString("base64"), first.button), verifySchema));
+    return answer === false ? rejectGuide(guide, req.lang) : guide;
+  } catch {
+    return guide;
   }
 }
 
@@ -83,5 +118,6 @@ function mockGuide(req: GuideRequest): Guide {
     steps,
     message: done ? "주문이 끝났어요. 영수증을 챙기세요." : `1번 '${button}' 버튼을 누르세요.`,
     done,
+    confidence: "high",
   };
 }

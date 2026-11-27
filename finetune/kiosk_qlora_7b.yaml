@@ -1,0 +1,62 @@
+### 키오스크 버튼 안내 QLoRA 학습 설정 (RTX 3060 12GB, Qwen2.5-VL-7B)
+### 실행 방법은 finetune/README.md 참고. 저장소 루트(C:\kiosk)에서 실행한다.
+
+### 모델
+model_name_or_path: Qwen/Qwen2.5-VL-7B-Instruct
+quantization_bit: 4
+quantization_method: bnb
+# 학습 사진은 앱과 같은 크기(840x1120 등, 98만 픽셀 이하)로 미리 줄여 두었다. 상한을 그보다 크게 두어야
+# 학습 중에 다시 줄지 않고, 답의 bbox_2d 좌표가 앱(Ollama)이 보는 사진과 맞는다. Ollama 상한과 같은 값.
+image_max_pixels: 1003520
+trust_remote_code: true
+
+### 방법
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target: all
+freeze_vision_tower: true
+freeze_multi_modal_projector: true
+optim: paged_adamw_8bit
+
+### 데이터 (finetune/build-train.ts가 만든다)
+dataset_dir: finetune/data/train
+dataset: kiosk_train
+eval_dataset: kiosk_val
+template: qwen2_vl
+# 사진 토큰 약 1,200개 + 1단계 system 문장 + 답
+cutoff_len: 3072
+preprocessing_num_workers: 1
+dataloader_num_workers: 0
+
+### 출력 (용량이 커서 저장소 밖에 둔다)
+output_dir: C:/Users/User/llamafactory/saves/kiosk-7b-qlora
+logging_steps: 5
+# 20단계(약 16분)마다 저장한다. 중간에 멈춰도 잃는 것이 적고, resume_from_checkpoint로 이어서 학습할 수 있다.
+# 저장본 하나가 수백 MB라 최근 3개만 남긴다.
+save_strategy: steps
+save_steps: 20
+save_total_limit: 3
+plot_loss: true
+overwrite_output_dir: true
+report_to: none
+
+### 학습
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+# 사진 22장뿐이라 많이 돌리면 외운다. 2번 돌리고 확인용 손실을 본다.
+num_train_epochs: 2
+lr_scheduler_type: cosine
+# transformers 5.17은 warmup_ratio를 받지 않는다. 739개 ÷ 8 × 2번 ≈ 185단계의 10%.
+warmup_steps: 18
+bf16: true
+
+### 확인용
+per_device_eval_batch_size: 1
+# 확인용 85개를 재는 데 몇 분 걸려서 저장 두 번에 한 번만 잰다.
+eval_strategy: steps
+eval_steps: 40

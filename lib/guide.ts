@@ -3,6 +3,9 @@ export type Lang = "ko" | "en";
 /** 버튼 위치. 사진 너비·높이에 대한 비율(0~1)이라 화면 크기와 상관없이 그대로 겹쳐 그릴 수 있다. */
 export type Box = { left: number; top: number; width: number; height: number };
 
+/** 모델이 이 안내를 얼마나 확신하는지. low면 웹은 상자를 띄우지 않고 다음 장면을 다시 분석한다. */
+export type Confidence = "high" | "medium" | "low";
+
 /** 이 화면에서 누를 버튼 하나. kind는 위치를 찾을 때 메뉴 칸 전체를 감쌀지 정한다. box가 null이면 위치를 못 찾은 것이다. */
 export type Step = { button: string; kind: "menu" | "button"; box: Box | null };
 
@@ -16,6 +19,7 @@ export type Guide = {
   steps: Step[];
   message: string;
   done: boolean;
+  confidence: Confidence;
 };
 
 export const MAX_STEPS = 3;
@@ -53,8 +57,9 @@ export const guideSchema = {
     },
     message: { type: "string", maxLength: 150 },
     done: { type: "boolean" },
+    confidence: { type: "string", enum: ["high", "medium", "low"] },
   },
-  required: ["stage", "where", "steps", "message", "done"],
+  required: ["stage", "where", "steps", "message", "done", "confidence"],
 } as const;
 
 export function buildMessages(req: GuideRequest) {
@@ -74,6 +79,7 @@ export function buildMessages(req: GuideRequest) {
     // 순서는 화면에 1→2→3으로 따로 보여 준다. message에 번호를 세게 하면 모델이 '4번… 9번…'을 끝없이 이어 썼다.
     "message는 소리 내어 읽어 줄 안내문이다. 첫 번째 버튼의 위치와 이름만 짧고 쉬운 한 문장으로 말한다.",
     "결제 단계라면 금액을 확인하라고 덧붙인다.",
+    "confidence는 이 안내가 맞다는 확신이다. 버튼 글자가 또렷이 보이고 목표와 분명히 맞으면 high, 비슷한 버튼이 여럿이거나 일부만 보이면 medium, 짐작이거나 화면이 흐리면 low로 한다.",
     `stage, where, message는 ${answerLang}로 쓴다. button은 화면에 적힌 글자 그대로 쓴다.`,
   ].join("\n");
 
@@ -86,8 +92,14 @@ export function buildMessages(req: GuideRequest) {
   ];
 }
 
+/** 버튼을 못 찾았을 때(steps가 빔) 쓰는 고정 문구. 모델은 steps를 비우고도 버튼 이름을 안내해 버려서 코드가 정한다. */
+export const RETRY_MESSAGE: Record<Lang, string> = {
+  ko: "화면이 잘 안 보여요. 휴대폰을 멈추고 조금 더 가까이, 또렷하게 비춰 주세요.",
+  en: "I can't see the screen clearly. Hold your phone still and point it a little closer.",
+};
+
 /** 1단계 출력(JSON 문자열)을 검증한다. 위치는 아직 없다(box: null). 형식이 틀리면 null. */
-export function parseGuide(raw: string): Guide | null {
+export function parseGuide(raw: string, lang: Lang = "ko"): Guide | null {
   let data: unknown;
   try {
     data = JSON.parse(raw);
@@ -99,14 +111,20 @@ export function parseGuide(raw: string): Guide | null {
   if (typeof d.message !== "string" || d.message.trim() === "") return null;
 
   const steps = readSteps(d.steps);
+  const done = d.done === true;
+
   return {
     stage: typeof d.stage === "string" ? d.stage : "",
     button: steps[0]?.button ?? "",
     where: typeof d.where === "string" ? d.where : "",
     box: null,
     steps,
-    message: d.message.trim(),
-    done: d.done === true,
+    // 누를 버튼이 하나도 없고 주문도 끝나지 않았다면 버튼을 못 찾은 것이니 다시 비춰 달라고만 안내한다.
+    // 위치만 못 찾은 경우(steps는 있고 box가 null)는 음성 안내를 할 수 있으니 모델 문구를 그대로 쓴다.
+    message: steps.length === 0 && !done ? RETRY_MESSAGE[lang] : d.message.trim(),
+    done,
+    // 값이 없거나 이상하면 low로 숨기지 않고 medium으로 둔다. 모델이 항목을 빼먹어도 안내가 사라지지 않게.
+    confidence: d.confidence === "high" || d.confidence === "low" ? d.confidence : "medium",
   };
 }
 
@@ -169,6 +187,52 @@ export function attachBoxes(guide: Guide, raw: string, width: number, height: nu
   });
   const steps = guide.steps.map((s, i) => ({ ...s, box: boxes[i] }));
   return { ...guide, steps, box: steps[0]?.box ?? null };
+}
+
+/** 3단계(검증) 출력 스키마. 잘라 낸 조각에 그 버튼이 있는지 예/아니오로만 받는다. */
+export const verifySchema = {
+  type: "object",
+  properties: { answer: { type: "string", enum: ["yes", "no"] } },
+  required: ["answer"],
+} as const;
+
+/** 상자 둘레를 25%씩 넓혀서 사진에서 잘라 낼 영역(픽셀). 사진 밖으로 나가지 않게 맞춘다. */
+export function cropRegion(box: Box, width: number, height: number) {
+  const padX = box.width * 0.25;
+  const padY = box.height * 0.25;
+  const left = Math.max(0, Math.floor((box.left - padX) * width));
+  const top = Math.max(0, Math.floor((box.top - padY) * height));
+  return {
+    left,
+    top,
+    width: Math.max(1, Math.min(width - left, Math.ceil((box.width + 2 * padX) * width))),
+    height: Math.max(1, Math.min(height - top, Math.ceil((box.height + 2 * padY) * height))),
+  };
+}
+
+/**
+ * 3단계(검증) 요청. 위치 찾기가 고른 상자만 잘라서, 정말 그 버튼인지 다시 묻는다.
+ * 49문항 시험에서 이 확인을 통과한 안내만 보여 주면 틀린 안내가 22개에서 6개로 줄었다(맞는 안내는 27개 중 20개 유지).
+ * 영어 문장을 쓰는 것은 위치 찾기와 같은 이유로 Qwen2.5-VL이 더 안정적이기 때문이다.
+ */
+export function buildVerifyMessages(crop: string, button: string) {
+  const content = `This image is a crop of a kiosk screen. Is there a button or menu card labeled "${button}" in this crop? Answer yes or no.`;
+  return [{ role: "user", content, images: [crop] }];
+}
+
+/** 검증 출력을 읽는다. 맞다 true, 아니다 false, 읽지 못했으면 null(이때는 안내를 그대로 둔다). */
+export function parseVerify(raw: string): boolean | null {
+  try {
+    const answer = (JSON.parse(raw) as { answer?: unknown }).answer;
+    return answer === "yes" ? true : answer === "no" ? false : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 검증에서 틀렸다고 나온 안내를 거둔다. 버튼 목록을 비우면 웹은 다음 장면을 다시 분석한다. */
+export function rejectGuide(guide: Guide, lang: Lang): Guide {
+  return { ...guide, button: "", where: "", box: null, steps: [], message: RETRY_MESSAGE[lang], confidence: "low" };
 }
 
 function toBox(value: unknown, width: number, height: number): Box | null {

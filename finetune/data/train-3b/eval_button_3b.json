@@ -1,0 +1,1739 @@
+{
+ "note": "기본 3B는 JSON이 깨져서 button 값만 뽑아 채점(loose_steps). 학습한 3B: saves/qwen25vl-3b-button (2026-11-26)",
+ "summary": {
+  "base": {
+   "guide": 41,
+   "name": 12,
+   "both": 8,
+   "json_fail": 41,
+   "loc_items": 90,
+   "loc_ok": 37
+  },
+  "tuned": {
+   "guide": 41,
+   "name": 32,
+   "both": 30,
+   "json_fail": 0,
+   "loc_items": 90,
+   "loc_ok": 84
+  }
+ },
+ "rows": [
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 하트 뿅!_레몬셔벗 딸기 스무디 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"하트 뿅!_레몬셔벗 딸기 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '하트 뿅!_레몬셔벗 딸기 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"레몬셔벗 딸기 스무디\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 코코넛커피 스무디 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"코코넛커피 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '코코넛커피 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"코코넛커피 스무디\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [140, 169, 203, 200], \"label\": \"코코넛커피 스무디\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 망고요거트스무디 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"망고요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '망고요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"말기요거트스무디\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기요거트스무디 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"딸기요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '딸기요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"딸기요거트스무디\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [347, 108, 446, 195], \"label\": \"딸기요거트스무디\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 플레인요거트스무디 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"플레인요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '플레인요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"플레인요거트스무디\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [10, 283, 127, 415], \"label\": \"플레인요거트스무디\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기바나나주스 한 잔 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기바나나주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기바나나주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"딸기바나나주스\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [163, 250, 234, 313], \"label\": \"딸기바나나주스\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기주스 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"딸기주스\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [346, 278, 445, 310], \"label\": \"딸기주스\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 샤인머스캣그린주스 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽\",\n  \"steps\": [\n    {\n      \"button\": \"샤인머스캣그린주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽에 있는 '샤인머스캣그린주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"사임머스캣그린주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 레드오렌지자몽주스 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"레드오렌지자몽주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '레드오렌지자몽주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"레드오렌지자몽주스\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [30, 378, 126, 415], \"label\": \"레드오렌지자몽주스\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 핫초코 한 잔 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"논-커피 라떼\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '논-커피 라떼' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 플레인크로플 하나 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"플레인크로플\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 감자빵 하나 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"메뉴\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (HOT)아메리카노 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (HOT)헤이즐넛아메리카노 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"헤이즐넛아메리카노\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (ICE)꿀아메리카노 한 잔 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"꿀아메리카노\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 에스프레소 도피오 한 잔 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 오리지널소프트 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 콜드브루디카페인상품용 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (ICE)바닐라아메리카노 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"스무디&주스\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 다 골랐어 이제 결제할래\n지금까지 누른 버튼: 음료 → 스무디&주스 → 주문담기\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [340, 550, 406, 578], \"label\": \"결제하기\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 담은 거 전부 지워 줘\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 처음부터 다시 볼래\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 오트밀 팬케이크 하나 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"오트밀 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '오트밀 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"오트밀 팬케이크\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [34, 185, 109, 206], \"label\": \"오트밀 팬케이크\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 티라미수 팬케이크 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '티라미수 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"티라미수 팬케이크\", \"kind\": \"menu\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [147, 239, 198, 280], \"label\": \"티라미수 팬케이크\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 몽쉘케이크 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"몽쉘케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '몽쉘케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"메인 메뉴\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 치즈케익 하나 포장\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"치즈케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '치즈케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"치즈케이크\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 초코무스케익 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"초코무스케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '초코무스케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"초코무스케익\", \"kind\": \"button\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [36, 240, 85, 287], \"label\": \"\\\"초코무스케익\\\"\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 티라미수케익 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '티라미수케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"티라미수케이크\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 크로크무슈 하나 주세요\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"베이커리\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '베이커리' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"디저트\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 할메가커피 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 허니브레드 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"베이커리\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '베이커리' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"메인 메뉴\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 메가쿠키(마카다미아) 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"디저트\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '디저트' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"메가쿠키\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 에스프레소 한 잔 포장\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 초코스모어쿠키 하나 주세요\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"디저트\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '디저트' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"초코스모어쿠키\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 딸기퐁크러쉬 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"딸기퐁크러쉬\", \"kind\": \"menu\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: (ICE)녹차라떼 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 커피프라페 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"커피\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: (ICE)디카페인 바닐라라떼 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"디카페인\", \"kind\": \"button\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [143, 65, 178, 80], \"label\": \"디카페인\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 장바구니에 담은 것 결제\n지금까지 누른 버튼: 푸드 → 케이크 → 주문담기\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": true,
+   "locate": "```json\n[\n\t{\"bbox_2d\": [335, 570, 408, 596], \"label\": \"\\\"결제하기\\\"\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 장바구니 다 비우고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"결제하기\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 처음 화면으로 돌아갈래\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "[\"button\": \"메인 메뉴\", \"kind\": \"button\"]",
+   "name_ok": false
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": " \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"논-커피 라떼\" (probably a button or tab)\n3. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [190, 49, 229, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [382, 73, 442, 92], \"label\": \"2\"},\n    {\"bbox_2d\": [316, 527, 437, 599], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 50, 186, 67], \"label\": \"디카페인\"},\n\t{\"bbox_2d\": [390, 50, 435, 67], \"label\": \"논-커피 라떼\"},\n\t{\"bbox_2d\": [390, 550, 413, 567], \"label\": \"결제하기\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"딸기주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 207, 354, 312], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [346, 278, 445, 310], \"label\": \"딸기주스\"}\n]\n```",
+   "loc_ok": [
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "{\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"딸기요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [320, 47, 330, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [352, 96, 467, 207], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [378, 49, 406, 65], \"label\": \"티\"},\n\t{\"bbox_2d\": [238, 168, 331, 186], \"label\": \"딸기요거트스무디\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": ".g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"처음으로\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [7, 19, 73, 40], \"label\": \"1\"},\n    {\"bbox_2d\": [433, 47, 452, 63], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [430, 56, 470, 68], \"label\": \"상품\"},\n\t{\"bbox_2d\": [430, 56, 470, 68], \"label\": \"상품\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "el\": \"1\"}.\n1. \"프라페\" (probably a button or tab)\n2. \"전체삭제\" (probably a button or tab)\n3. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [164, 76, 194, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [401, 453, 440, 489], \"label\": \"2\"},\n    {\"bbox_2d\": [74, 49, 112, 61], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 56, 187, 69], \"label\": \"프라페\"},\n\t{\"bbox_2d\": [404, 459, 438, 486], \"label\": \"전체삭제\"},\n\t{\"bbox_2d\": [14, 48, 60, 61], \"label\": \"추천메뉴\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": ". \"음료\" (probably a button or tab)\n2. \"신메뉴\" (probably a button or tab)\n3. \"하트 뿅!_레몬셔벗 딸기 스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [256, 47, 278, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [18, 47, 51, 62], \"label\": \"2\"},\n    {\"bbox_2d\": [11, 96, 127, 207], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [408, 25, 469, 37], \"label\": \"음료\"},\n\t{\"bbox_2d\": [20, 47, 60, 65], \"label\": \"신메뉴\"},\n\t{\"bbox_2d\": [43, 114, 129, 202], \"label\": \"하트 뿅!_레몬셔벗 딸기 스무디\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"망고요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 96, 354, 207], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [237, 70, 356, 204], \"label\": \"망고요거트스무디\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "\"label\": \"1\"}.\n1. \"커피\" (probably a button or tab)\n2. \"에이드\" (probably a button or tab)\n3. \"푸드\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [140, 49, 161, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [48, 76, 80, 88], \"label\": \"2\"},\n    {\"bbox_2d\": [376, 47, 395, 63], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 50, 186, 67], \"label\": \"커피\"},\n\t{\"bbox_2d\": [140, 99, 186, 116], \"label\": \"에이드\"},\n\t{\"bbox_2d\": [378, 50, 414, 67], \"label\": \"푸드\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": " \"레드오렌지자몽주스\" (probably a menu item card)\n2. \"딸기바나나주스\" (probably a menu item card)\n3. \"스무디&주스\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 317, 127, 416], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 207, 240, 312], \"label\": \"2\"},\n    {\"bbox_2d\": [268, 76, 324, 88], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [29, 280, 114, 305], \"label\": \"레드오렌지자몽주스\"},\n\t{\"bbox_2d\": [167, 278, 220, 302], \"label\": \"레드오렌지자몽주스\"},\n\t{\"bbox_2d\": [353, 280, 443, 304], \"label\": \"스무디&주스\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": ": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"플레인요거트스무디\" (probably a menu item card)\n2. \"코코넛커피 스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 207, 127, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 96, 240, 207], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [139, 168, 204, 205], \"label\": \"플레인요거트스무디\"},\n\t{\"bbox_2d\": [139, 168, 204, 205], \"label\": \"코코넛커피 스무디\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "lement number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"샤인머스캣그린주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [352, 207, 467, 312], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [340, 278, 445, 316], \"label\": \"\\\"샤인머스캣그린주스\\\" (probably a menu item card)\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "se the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [140, 49, 161, 61], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 53, 186, 67], \"label\": \"\\\"커피\\\"\"}\n]\n```",
+   "loc_ok": [
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": " the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"전체삭제\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [401, 453, 440, 489], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [405, 460, 438, 490], \"label\": \"전체삭제\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "bel\": \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)\n3. \"처음으로\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [190, 49, 229, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [433, 47, 452, 63], \"label\": \"2\"},\n    {\"bbox_2d\": [7, 19, 73, 40], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 50, 186, 67], \"label\": \"디카페인\"},\n\t{\"bbox_2d\": [430, 50, 469, 67], \"label\": \"상품\"},\n\t{\"bbox_2d\": [17, 24, 69, 40], \"label\": \"처음으로\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "l\": \"1\"}.\n1. \"신메뉴\" (probably a button or tab)\n2. \"논-커피 라떼\" (probably a button or tab)\n3. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [18, 47, 51, 62], \"label\": \"1\"},\n    {\"bbox_2d\": [382, 73, 442, 92], \"label\": \"2\"},\n    {\"bbox_2d\": [256, 47, 278, 63], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [14, 50, 67, 68], \"label\": \"신메뉴\"},\n\t{\"bbox_2d\": [390, 48, 420, 65], \"label\": \"논-커피 라떼\"},\n\t{\"bbox_2d\": [230, 70, 259, 87], \"label\": \"음료\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "1. \"플레인요거트스무디\" (probably a menu item card)\n2. \"프라페\" (probably a button or tab)\n3. \"딸기요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 207, 127, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [164, 76, 194, 88], \"label\": \"2\"},\n    {\"bbox_2d\": [352, 96, 467, 207], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [14, 98, 140, 205], \"label\": \"플레인요거트스무디\"},\n\t{\"bbox_2d\": [146, 70, 238, 168], \"label\": \"프라페\"},\n\t{\"bbox_2d\": [238, 70, 330, 168], \"label\": \"딸기요거트스무디\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "스무디\" (probably a menu item card)\n2. \"하트 뿅!_레몬셔벗 딸기 스무디\" (probably a menu item card)\n3. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [124, 96, 240, 207], \"label\": \"1\"},\n    {\"bbox_2d\": [11, 96, 127, 207], \"label\": \"2\"},\n    {\"bbox_2d\": [74, 49, 112, 61], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 56, 197, 68], \"label\": \"추천메뉴\"},\n\t{\"bbox_2d\": [140, 56, 197, 68], \"label\": \"추천메뉴\"},\n\t{\"bbox_2d\": [140, 56, 197, 68], \"label\": \"추천메뉴\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"스무디&주스\" (probably a button or tab)\n2. \"푸드\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [268, 76, 324, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [376, 47, 395, 63], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [378, 50, 406, 64], \"label\": \"스무디&주스\"},\n\t{\"bbox_2d\": [379, 50, 406, 64], \"label\": \"푸드\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "\"}.\n1. \"딸기주스\" (probably a menu item card)\n2. \"망고요거트스무디\" (probably a menu item card)\n3. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 207, 354, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [238, 96, 354, 207], \"label\": \"2\"},\n    {\"bbox_2d\": [316, 527, 437, 599], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [240, 75, 356, 198], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [137, 75, 240, 198], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [348, 75, 451, 198], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [348, 198, 451, 314], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [348, 314, 451, 428], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [348, 428, 451, 542], \"label\": \"망고요거트스무디\"},\n\t{\"bbox_2d\": [348, 542, 451, 630], \"label\": \"결제하기\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": " {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"딸기바나나주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [320, 47, 330, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 207, 240, 312], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [378, 49, 405, 64], \"label\": \"티\"},\n\t{\"bbox_2d\": [160, 267, 230, 312], \"label\": \"딸기바나나주스\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "lement number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"레드오렌지자몽주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 317, 127, 416], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [30, 378, 126, 415], \"label\": \"레드오렌지자몽주스\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1623.jpg",
+   "q": "box_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"에이드\" (probably a button or tab)\n2. \"샤인머스캣그린주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [48, 76, 80, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [352, 207, 467, 312], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [13, 98, 27, 130], \"label\": \"에이드\"},\n\t{\"bbox_2d\": [345, 276, 443, 313], \"label\": \"샤인머스캣그린주스\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "l\": \"1\"}.\n1. \"추천메뉴\" (probably a button or tab)\n2. \"디카페인\" (probably a button or tab)\n3. \"베이커리\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [67, 66, 105, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [183, 66, 222, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [153, 92, 193, 103], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [140, 65, 187, 82], \"label\": \"추천메뉴\"},\n\t{\"bbox_2d\": [209, 65, 256, 82], \"label\": \"디카페인\"},\n\t{\"bbox_2d\": [279, 65, 326, 82], \"label\": \"베이커리\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"초코무스케익\" (probably a menu item card)\n2. \"티\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 224, 116, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [314, 67, 325, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [37, 240, 85, 286], \"label\": \"초코무스케익\"},\n\t{\"bbox_2d\": [379, 67, 403, 79], \"label\": \"티\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "1\"}.\n1. \"결제하기\" (probably a button or tab)\n2. \"디저트\" (probably a button or tab)\n3. \"티라미수 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [310, 549, 434, 621], \"label\": \"1\"},\n    {\"bbox_2d\": [43, 92, 72, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [119, 114, 232, 225], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [334, 570, 408, 596], \"label\": \"결제하기\"},\n\t{\"bbox_2d\": [13, 89, 46, 103], \"label\": \"디저트\"},\n\t{\"bbox_2d\": [150, 241, 197, 280], \"label\": \"티라미수 팬케이크\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "e element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티라미수케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 224, 232, 329], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [150, 243, 197, 326], \"label\": \"\\\"티라미수케익\\\"\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": ".g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"처음으로\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [2, 36, 64, 54], \"label\": \"1\"},\n    {\"bbox_2d\": [427, 68, 446, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [370, 68, 419, 80], \"label\": \"상품\"},\n\t{\"bbox_2d\": [419, 68, 458, 80], \"label\": \"상품\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"아이스크림\" (probably a button or tab)\n2. \"몽쉘케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [378, 91, 440, 108], \"label\": \"1\"},\n    {\"bbox_2d\": [233, 114, 349, 225], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [445, 119, 463, 137], \"label\": \"아이스크림\"},\n\t{\"bbox_2d\": [270, 182, 340, 220], \"label\": \"몽쉘케이크\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"케이크\" (probably a button or tab)\n2. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [274, 92, 305, 103], \"label\": \"1\"},\n    {\"bbox_2d\": [133, 66, 154, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [247, 65, 280, 83], \"label\": \"\\\"케이크\\\"\"},\n\t{\"bbox_2d\": [139, 65, 172, 83], \"label\": \"\\\"커피\\\"\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"치즈케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [347, 114, 465, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [384, 186, 427, 220], \"label\": \"치즈케익\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "abel\": \"1\"}.\n1. \"전체삭제\" (probably a button or tab)\n2. \"푸드\" (probably a button or tab)\n3. \"신메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [397, 477, 438, 511], \"label\": \"1\"},\n    {\"bbox_2d\": [369, 68, 384, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [14, 66, 40, 79], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [405, 480, 436, 509], \"label\": \"전체삭제\"},\n\t{\"bbox_2d\": [370, 67, 404, 80], \"label\": \"푸드\"},\n\t{\"bbox_2d\": [14, 67, 44, 80], \"label\": \"신메뉴\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "se the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [250, 65, 271, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [245, 63, 278, 80], \"label\": \"음료\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"오트밀 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 114, 116, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [34, 185, 109, 206], \"label\": \"오트밀 팬케이크\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": " \"1\"}.\n1. \"티라미수케익\" (probably a menu item card)\n2. \"아이스크림\" (probably a button or tab)\n3. \"케이크\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 224, 232, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [378, 91, 440, 108], \"label\": \"2\"},\n    {\"bbox_2d\": [274, 92, 305, 103], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [150, 240, 197, 280], \"label\": \"티라미수케익\"},\n\t{\"bbox_2d\": [446, 120, 462, 136], \"label\": \"아이스크림\"},\n\t{\"bbox_2d\": [287, 93, 308, 104], \"label\": \"케이크\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "el\": \"1\"}.\n1. \"치즈케익\" (probably a menu item card)\n2. \"베이커리\" (probably a button or tab)\n3. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [347, 114, 465, 225], \"label\": \"1\"},\n    {\"bbox_2d\": [153, 92, 193, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [133, 66, 154, 79], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [267, 94, 308, 105], \"label\": \"치즈케익\"},\n\t{\"bbox_2d\": [147, 90, 192, 101], \"label\": \"베이커리\"},\n\t{\"bbox_2d\": [147, 67, 177, 79], \"label\": \"커피\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"오트밀 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 114, 116, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [34, 185, 109, 206], \"label\": \"오트밀 팬케이크\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "e the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"신메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [14, 66, 40, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [10, 65, 47, 80], \"label\": \"신메뉴\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "e element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"초코무스케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 224, 116, 329], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [37, 240, 86, 285], \"label\": \"\\\"초코무스케익\\\"\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"상품\" (probably a button or tab)\n2. \"디저트\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [427, 68, 446, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [43, 92, 72, 103], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [370, 68, 419, 80], \"label\": \"상품\"},\n\t{\"bbox_2d\": [15, 89, 140, 100], \"label\": \"디저트\"}\n]\n```",
+   "loc_ok": [
+    false,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": " the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [67, 66, 105, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [94, 65, 137, 80], \"label\": \"추천메뉴\"}\n]\n```",
+   "loc_ok": [
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "el\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"전체삭제\" (probably a button or tab)\n3. \"몽쉘케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [314, 67, 325, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [397, 477, 438, 511], \"label\": \"2\"},\n    {\"bbox_2d\": [233, 114, 349, 225], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [408, 67, 459, 81], \"label\": \"티\"},\n\t{\"bbox_2d\": [408, 478, 433, 508], \"label\": \"전체삭제\"},\n\t{\"bbox_2d\": [267, 94, 310, 112], \"label\": \"몽쉘케이크\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": "ox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티라미수 팬케이크\" (probably a menu item card)\n2. \"처음으로\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 114, 232, 225], \"label\": \"1\"},\n    {\"bbox_2d\": [2, 36, 64, 54], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [147, 130, 196, 165], \"label\": \"티라미수 팬케이크\"},\n\t{\"bbox_2d\": [148, 242, 197, 278], \"label\": \"티라미수 팬케이크\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [183, 66, 222, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 549, 434, 621], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [248, 65, 307, 82], \"label\": \"디카페인\"},\n\t{\"bbox_2d\": [390, 572, 408, 589], \"label\": \"결제하기\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "base",
+   "image": "images/IMG_1627.jpg",
+   "q": " e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"푸드\" (probably a button or tab)\n2. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [369, 68, 384, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [250, 65, 271, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n\t{\"bbox_2d\": [368, 67, 409, 80], \"label\": \"푸드\"},\n\t{\"bbox_2d\": [245, 67, 276, 80], \"label\": \"음료\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 하트 뿅!_레몬셔벗 딸기 스무디 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"하트 뿅!_레몬셔벗 딸기 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '하트 뿅!_레몬셔벗 딸기 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"하트 뿅!_레몬셔벗 딸기 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '하트 뿅!_레몬셔벗 딸기 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [7, 98, 125, 213], \"label\": \"1\"},\n    {\"bbox_2d\": [309, 524, 441, 602], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 코코넛커피 스무디 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"코코넛커피 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '코코넛커피 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"코코넛커피 스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '코코넛커피 스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [124, 97, 238, 206], \"label\": \"1\"},\n    {\"bbox_2d\": [315, 520, 440, 602], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 망고요거트스무디 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"망고요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '망고요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"망고요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '망고요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [235, 97, 354, 206], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 528, 440, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기요거트스무디 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"딸기요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '딸기요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"딸기요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '딸기요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [345, 96, 468, 207], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 522, 441, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 플레인요거트스무디 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"플레인요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '플레인요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"플레인요거트스무디\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '플레인요거트스무디' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [7, 209, 126, 314], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 528, 440, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기바나나주스 한 잔 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기바나나주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기바나나주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기바나나주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기바나나주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [126, 209, 238, 314], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 527, 440, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 딸기주스 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"딸기주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '딸기주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [345, 209, 468, 314], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 527, 468, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 샤인머스캣그린주스 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽\",\n  \"steps\": [\n    {\n      \"button\": \"샤인머스캣그린주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽에 있는 '샤인머스캣그린주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽\",\n  \"steps\": [\n    {\n      \"button\": \"사임머스캣그린주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽에 있는 '사임머스캣그린주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 레드오렌지자몽주스 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"레드오렌지자몽주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '레드오렌지자몽주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"레드오렌지자몽주스\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '레드오렌지자몽주스' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [10, 317, 128, 416], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 529, 440, 601], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 핫초코 한 잔 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"논-커피 라떼\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '논-커피 라떼' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 플레인크로플 하나 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"프라페\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '프라페' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 감자빵 하나 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [375, 50, 394, 63], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (HOT)아메리카노 한 잔 포장\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (HOT)헤이즐넛아메리카노 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (ICE)꿀아메리카노 한 잔 주문\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 에스프레소 도피오 한 잔 주세요\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 오리지널소프트 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [375, 50, 394, 63], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 콜드브루디카페인상품용 먹고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [189, 50, 230, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: (ICE)바닐라아메리카노 주문하고 싶어\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 다 골랐어 이제 결제할래\n지금까지 누른 버튼: 음료 → 스무디&주스 → 주문담기\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [309, 524, 440, 602], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 담은 거 전부 지워 줘\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [403, 456, 439, 487], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "<image>목표: 처음부터 다시 볼래\n지금까지 누른 버튼: 음료 → 스무디&주스\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [10, 20, 73, 40], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 오트밀 팬케이크 하나 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"오트밀 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '오트밀 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"오트밀 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '오트밀 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [7, 113, 116, 224], \"label\": \"1\"},\n    {\"bbox_2d\": [308, 539, 437, 627], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 티라미수 팬케이크 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '티라미수 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수 팬케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '티라미수 팬케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [123, 224, 230, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [308, 536, 437, 627], \"label\": \"2\"}\n]\n```",
+   "pos_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 몽쉘케이크 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"몽쉘케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '몽쉘케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"몽쉘케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '몽쉘케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [238, 114, 347, 225], \"label\": \"1\"},\n    {\"bbox_2d\": [309, 536, 437, 627], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 치즈케익 하나 포장\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"치즈케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '치즈케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"치즈케이크\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 위에 있는 '치즈케이크' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 초코무스케익 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"초코무스케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '초코무스케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽\",\n  \"steps\": [\n    {\n      \"button\": \"초코무스케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽에 있는 '초코무스케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [7, 224, 116, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [308, 533, 436, 627], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 티라미수케익 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '티라미수케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"티라미수케익\",\n      \"kind\": \"menu\"\n    },\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '티라미수케익' 메뉴를 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [124, 225, 230, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [308, 536, 437, 627], \"label\": \"2\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 크로크무슈 하나 주세요\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"베이커리\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '베이커리' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데\",\n  \"steps\": [\n    {\n      \"button\": \"디저트\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데에 있는 '디저트' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 할메가커피 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [136, 65, 154, 78], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 허니브레드 주문하고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"베이커리\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '베이커리' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 메가쿠키(마카다미아) 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"디저트\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '디저트' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 에스프레소 한 잔 포장\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [136, 65, 154, 78], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 초코스모어쿠키 하나 주세요\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"디저트\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '디저트' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"푸드\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '푸드' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 딸기퐁크러쉬 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [246, 65, 267, 80], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: (ICE)녹차라떼 한 잔 주문\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [246, 65, 267, 80], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 커피프라페 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"음료\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '음료' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"커피\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '커피' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": false
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: (ICE)디카페인 바닐라라떼 먹고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 가운데 위\",\n  \"steps\": [\n    {\n      \"button\": \"디카페인\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 가운데 위에 있는 '디카페인' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [180, 65, 223, 79], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 장바구니에 담은 것 결제\n지금까지 누른 버튼: 푸드 → 케이크 → 주문담기\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"장바구니\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"결제하기\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '결제하기' 버튼을 누르세요. 결제 금액을 확인하세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [308, 540, 436, 627], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 장바구니 다 비우고 싶어\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 오른쪽 아래\",\n  \"steps\": [\n    {\n      \"button\": \"전체삭제\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 오른쪽 아래에 있는 '전체삭제' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [397, 476, 435, 510], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "<image>목표: 처음 화면으로 돌아갈래\n지금까지 누른 버튼: 푸드 → 케이크\n이 화면에서 다음에 누를 버튼을 알려 줘.",
+   "gold": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "ai": "{\n  \"stage\": \"메뉴 선택\",\n  \"where\": \"화면 왼쪽 위\",\n  \"steps\": [\n    {\n      \"button\": \"처음으로\",\n      \"kind\": \"button\"\n    }\n  ],\n  \"message\": \"화면 왼쪽 위에 있는 '처음으로' 버튼을 누르세요.\",\n  \"done\": false,\n  \"confidence\": \"high\"\n}",
+   "name_ok": true,
+   "locate": "```json\n[\n    {\"bbox_2d\": [10, 38, 65, 54], \"label\": \"1\"}\n]\n```",
+   "pos_ok": true
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": " \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"논-커피 라떼\" (probably a button or tab)\n3. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [190, 49, 229, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [382, 73, 442, 92], \"label\": \"2\"},\n    {\"bbox_2d\": [316, 527, 437, 599], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [189, 50, 227, 64], \"label\": \"1\"},\n    {\"bbox_2d\": [370, 76, 440, 95], \"label\": \"2\"},\n    {\"bbox_2d\": [310, 538, 440, 601], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"딸기주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 207, 354, 312], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [235, 209, 354, 316], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "{\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"딸기요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [320, 47, 330, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [352, 96, 467, 207], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [320, 78, 334, 91], \"label\": \"1\"},\n    {\"bbox_2d\": [345, 96, 467, 205], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": ".g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"처음으로\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [7, 19, 73, 40], \"label\": \"1\"},\n    {\"bbox_2d\": [433, 47, 452, 63], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [10, 20, 73, 40], \"label\": \"1\"},\n    {\"bbox_2d\": [431, 51, 456, 66], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "el\": \"1\"}.\n1. \"프라페\" (probably a button or tab)\n2. \"전체삭제\" (probably a button or tab)\n3. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [164, 76, 194, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [401, 453, 440, 489], \"label\": \"2\"},\n    {\"bbox_2d\": [74, 49, 112, 61], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [165, 74, 198, 89], \"label\": \"1\"},\n    {\"bbox_2d\": [403, 456, 439, 487], \"label\": \"2\"},\n    {\"bbox_2d\": [74, 49, 116, 65], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": ". \"음료\" (probably a button or tab)\n2. \"신메뉴\" (probably a button or tab)\n3. \"하트 뿅!_레몬셔벗 딸기 스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [256, 47, 278, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [18, 47, 51, 62], \"label\": \"2\"},\n    {\"bbox_2d\": [11, 96, 127, 207], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [250, 49, 276, 65], \"label\": \"1\"},\n    {\"bbox_2d\": [18, 49, 47, 65], \"label\": \"2\"},\n    {\"bbox_2d\": [10, 97, 125, 206], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"망고요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 96, 354, 207], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [234, 97, 353, 206], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "\"label\": \"1\"}.\n1. \"커피\" (probably a button or tab)\n2. \"에이드\" (probably a button or tab)\n3. \"푸드\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [140, 49, 161, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [48, 76, 80, 88], \"label\": \"2\"},\n    {\"bbox_2d\": [376, 47, 395, 63], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [140, 50, 160, 65], \"label\": \"1\"},\n    {\"bbox_2d\": [47, 80, 79, 92], \"label\": \"2\"},\n    {\"bbox_2d\": [375, 50, 394, 65], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": " \"레드오렌지자몽주스\" (probably a menu item card)\n2. \"딸기바나나주스\" (probably a menu item card)\n3. \"스무디&주스\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 317, 127, 416], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 207, 240, 312], \"label\": \"2\"},\n    {\"bbox_2d\": [268, 76, 324, 88], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [10, 318, 127, 415], \"label\": \"1\"},\n    {\"bbox_2d\": [126, 210, 239, 315], \"label\": \"2\"},\n    {\"bbox_2d\": [264, 76, 327, 94], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": ": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"플레인요거트스무디\" (probably a menu item card)\n2. \"코코넛커피 스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 207, 127, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 96, 240, 207], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [7, 209, 126, 314], \"label\": \"1\"},\n    {\"bbox_2d\": [125, 98, 238, 209], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "lement number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"샤인머스캣그린주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [352, 207, 467, 312], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [340, 209, 468, 315], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "se the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [140, 49, 161, 61], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [139, 50, 160, 64], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": " the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"전체삭제\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [401, 453, 440, 489], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [403, 456, 439, 487], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "bel\": \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)\n3. \"처음으로\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [190, 49, 229, 61], \"label\": \"1\"},\n    {\"bbox_2d\": [433, 47, 452, 63], \"label\": \"2\"},\n    {\"bbox_2d\": [7, 19, 73, 40], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [189, 49, 230, 65], \"label\": \"1\"},\n    {\"bbox_2d\": [431, 51, 457, 65], \"label\": \"2\"},\n    {\"bbox_2d\": [10, 21, 72, 39], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "l\": \"1\"}.\n1. \"신메뉴\" (probably a button or tab)\n2. \"논-커피 라떼\" (probably a button or tab)\n3. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [18, 47, 51, 62], \"label\": \"1\"},\n    {\"bbox_2d\": [382, 73, 442, 92], \"label\": \"2\"},\n    {\"bbox_2d\": [256, 47, 278, 63], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [18, 49, 50, 66], \"label\": \"1\"},\n    {\"bbox_2d\": [370, 75, 440, 95], \"label\": \"2\"},\n    {\"bbox_2d\": [249, 49, 266, 66], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "1. \"플레인요거트스무디\" (probably a menu item card)\n2. \"프라페\" (probably a button or tab)\n3. \"딸기요거트스무디\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 207, 127, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [164, 76, 194, 88], \"label\": \"2\"},\n    {\"bbox_2d\": [352, 96, 467, 207], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [6, 209, 127, 314], \"label\": \"1\"},\n    {\"bbox_2d\": [165, 78, 186, 90], \"label\": \"2\"},\n    {\"bbox_2d\": [343, 97, 468, 203], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "스무디\" (probably a menu item card)\n2. \"하트 뿅!_레몬셔벗 딸기 스무디\" (probably a menu item card)\n3. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [124, 96, 240, 207], \"label\": \"1\"},\n    {\"bbox_2d\": [11, 96, 127, 207], \"label\": \"2\"},\n    {\"bbox_2d\": [74, 49, 112, 61], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [124, 98, 237, 206], \"label\": \"1\"},\n    {\"bbox_2d\": [10, 98, 123, 206], \"label\": \"2\"},\n    {\"bbox_2d\": [75, 50, 112, 65], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"스무디&주스\" (probably a button or tab)\n2. \"푸드\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [268, 76, 324, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [376, 47, 395, 63], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [263, 78, 320, 94], \"label\": \"1\"},\n    {\"bbox_2d\": [375, 50, 394, 63], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "\"}.\n1. \"딸기주스\" (probably a menu item card)\n2. \"망고요거트스무디\" (probably a menu item card)\n3. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [238, 207, 354, 312], \"label\": \"1\"},\n    {\"bbox_2d\": [238, 96, 354, 207], \"label\": \"2\"},\n    {\"bbox_2d\": [316, 527, 437, 599], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [234, 209, 353, 316], \"label\": \"1\"},\n    {\"bbox_2d\": [234, 98, 353, 209], \"label\": \"2\"},\n    {\"bbox_2d\": [310, 537, 441, 602], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": " {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"딸기바나나주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [320, 47, 330, 63], \"label\": \"1\"},\n    {\"bbox_2d\": [124, 207, 240, 312], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [320, 76, 334, 90], \"label\": \"1\"},\n    {\"bbox_2d\": [125, 208, 238, 314], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "lement number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"레드오렌지자몽주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [11, 317, 127, 416], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [10, 318, 127, 415], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1623.jpg",
+   "q": "box_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"에이드\" (probably a button or tab)\n2. \"샤인머스캣그린주스\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [48, 76, 80, 88], \"label\": \"1\"},\n    {\"bbox_2d\": [352, 207, 467, 312], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [47, 76, 73, 89], \"label\": \"1\"},\n    {\"bbox_2d\": [340, 209, 468, 315], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "l\": \"1\"}.\n1. \"추천메뉴\" (probably a button or tab)\n2. \"디카페인\" (probably a button or tab)\n3. \"베이커리\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [67, 66, 105, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [183, 66, 222, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [153, 92, 193, 103], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [68, 65, 104, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [174, 65, 220, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [152, 92, 192, 104], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"초코무스케익\" (probably a menu item card)\n2. \"티\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 224, 116, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [314, 67, 325, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [8, 224, 117, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [315, 67, 323, 78], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "1\"}.\n1. \"결제하기\" (probably a button or tab)\n2. \"디저트\" (probably a button or tab)\n3. \"티라미수 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [310, 549, 434, 621], \"label\": \"1\"},\n    {\"bbox_2d\": [43, 92, 72, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [119, 114, 232, 225], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [308, 540, 436, 627], \"label\": \"1\"},\n    {\"bbox_2d\": [129, 92, 157, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [129, 225, 232, 327], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "e element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티라미수케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 224, 232, 329], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [124, 225, 230, 329], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": ".g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"처음으로\" (probably a button or tab)\n2. \"상품\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [2, 36, 64, 54], \"label\": \"1\"},\n    {\"bbox_2d\": [427, 68, 446, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [10, 38, 65, 54], \"label\": \"1\"},\n    {\"bbox_2d\": [427, 69, 445, 81], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"아이스크림\" (probably a button or tab)\n2. \"몽쉘케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [378, 91, 440, 108], \"label\": \"1\"},\n    {\"bbox_2d\": [233, 114, 349, 225], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [378, 94, 450, 106], \"label\": \"1\"},\n    {\"bbox_2d\": [237, 113, 347, 223], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"케이크\" (probably a button or tab)\n2. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [274, 92, 305, 103], \"label\": \"1\"},\n    {\"bbox_2d\": [133, 66, 154, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [270, 93, 306, 104], \"label\": \"1\"},\n    {\"bbox_2d\": [135, 66, 153, 80], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"치즈케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [347, 114, 465, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [359, 114, 463, 222], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "abel\": \"1\"}.\n1. \"전체삭제\" (probably a button or tab)\n2. \"푸드\" (probably a button or tab)\n3. \"신메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [397, 477, 438, 511], \"label\": \"1\"},\n    {\"bbox_2d\": [369, 68, 384, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [14, 66, 40, 79], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [400, 476, 435, 510], \"label\": \"1\"},\n    {\"bbox_2d\": [369, 68, 386, 79], \"label\": \"2\"},\n    {\"bbox_2d\": [15, 65, 41, 77], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "se the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [250, 65, 271, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [246, 65, 267, 80], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"오트밀 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 114, 116, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [7, 113, 116, 224], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": " \"1\"}.\n1. \"티라미수케익\" (probably a menu item card)\n2. \"아이스크림\" (probably a button or tab)\n3. \"케이크\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 224, 232, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [378, 91, 440, 108], \"label\": \"2\"},\n    {\"bbox_2d\": [274, 92, 305, 103], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [124, 225, 230, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [378, 94, 426, 106], \"label\": \"2\"},\n    {\"bbox_2d\": [271, 94, 306, 106], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "el\": \"1\"}.\n1. \"치즈케익\" (probably a menu item card)\n2. \"베이커리\" (probably a button or tab)\n3. \"커피\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [347, 114, 465, 225], \"label\": \"1\"},\n    {\"bbox_2d\": [153, 92, 193, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [133, 66, 154, 79], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [354, 113, 463, 223], \"label\": \"1\"},\n    {\"bbox_2d\": [153, 93, 187, 103], \"label\": \"2\"},\n    {\"bbox_2d\": [136, 66, 153, 78], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"오트밀 팬케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 114, 116, 225], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [7, 113, 116, 224], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "e the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"신메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [14, 66, 40, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [15, 64, 43, 78], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "e element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"초코무스케익\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [5, 224, 116, 329], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [8, 224, 117, 329], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"상품\" (probably a button or tab)\n2. \"디저트\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [427, 68, 446, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [43, 92, 72, 103], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [423, 67, 445, 80], \"label\": \"1\"},\n    {\"bbox_2d\": [129, 92, 161, 104], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    false
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": " the element number as the label, e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"추천메뉴\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [67, 66, 105, 79], \"label\": \"1\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [68, 65, 107, 79], \"label\": \"1\"}\n]\n```",
+   "loc_ok": [
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "el\": \"1\"}.\n1. \"티\" (probably a button or tab)\n2. \"전체삭제\" (probably a button or tab)\n3. \"몽쉘케이크\" (probably a menu item card)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [314, 67, 325, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [397, 477, 438, 511], \"label\": \"2\"},\n    {\"bbox_2d\": [233, 114, 349, 225], \"label\": \"3\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [315, 67, 324, 78], \"label\": \"1\"},\n    {\"bbox_2d\": [399, 475, 434, 509], \"label\": \"2\"},\n    {\"bbox_2d\": [239, 113, 347, 222], \"label\": \"3\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": "ox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"티라미수 팬케이크\" (probably a menu item card)\n2. \"처음으로\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [119, 114, 232, 225], \"label\": \"1\"},\n    {\"bbox_2d\": [2, 36, 64, 54], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [123, 224, 230, 329], \"label\": \"1\"},\n    {\"bbox_2d\": [10, 37, 65, 53], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    false,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": ". {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"디카페인\" (probably a button or tab)\n2. \"결제하기\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [183, 66, 222, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [310, 549, 434, 621], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [174, 65, 220, 80], \"label\": \"1\"},\n    {\"bbox_2d\": [309, 537, 436, 627], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  },
+  {
+   "model": "tuned",
+   "image": "images/IMG_1627.jpg",
+   "q": " e.g. {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"1\"}.\n1. \"푸드\" (probably a button or tab)\n2. \"음료\" (probably a button or tab)",
+   "gold": "```json\n[\n    {\"bbox_2d\": [369, 68, 384, 79], \"label\": \"1\"},\n    {\"bbox_2d\": [250, 65, 271, 79], \"label\": \"2\"}\n]\n```",
+   "ai": "```json\n[\n    {\"bbox_2d\": [367, 65, 389, 80], \"label\": \"1\"},\n    {\"bbox_2d\": [246, 65, 267, 80], \"label\": \"2\"}\n]\n```",
+   "loc_ok": [
+    true,
+    true
+   ]
+  }
+ ]
+}

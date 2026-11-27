@@ -1,0 +1,374 @@
+{
+ "summary": "kiosk-3b-base: 이름 13/41, 이름+위치 11/41, 오류 0, 평균 1.8초",
+ "rows": [
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "하트 뿅!_레몬셔벗 딸기 스무디",
+   "ai": "레몬셔벗 딸기 스무디",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 6744
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "코코넛커피 스무디",
+   "ai": "코코넛커피 스무디",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 3289
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "망고요거트스무디",
+   "ai": "스무디&주스",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1118
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "딸기요거트스무디",
+   "ai": "딸기요거트스무디",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2159
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "플레인요거트스무디",
+   "ai": "플레인요거트스무디",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2210
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "딸기바나나주스",
+   "ai": "딸기바나나주스",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2224
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "딸기주스",
+   "ai": "딸기주스",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2055
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "샤인머스캣그린주스",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1094
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "레드오렌지자몽주스",
+   "ai": "레드오렌지자몽주스",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2143
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "논-커피 라떼",
+   "ai": "스무디&주스",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1114
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "푸드",
+   "ai": "플레인크로플",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1168
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "푸드",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1032
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "커피",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1118
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "커피",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1127
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "커피",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1135
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "커피",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1062
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "푸드",
+   "ai": "스무디&주스",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1157
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "디카페인",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1043
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "커피",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1029
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "결제하기",
+   "ai": "결제하기",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 1633
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "전체삭제",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1066
+  },
+  {
+   "image": "images/IMG_1623.jpg",
+   "answer": "처음으로",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1035
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "오트밀 팬케이크",
+   "ai": "오트밀 팬케이크",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 4245
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "티라미수 팬케이크",
+   "ai": "티라미수 팬케이크",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2482
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "몽쉘케이크",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1313
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "치즈케익",
+   "ai": "치즈케익",
+   "nameOk": true,
+   "posOk": false,
+   "error": "",
+   "ms": 2538
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "초코무스케익",
+   "ai": "초코무스케익",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2532
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "티라미수케익",
+   "ai": "티라미수케익",
+   "nameOk": true,
+   "posOk": true,
+   "error": "",
+   "ms": 2559
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "베이커리",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1315
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "커피",
+   "ai": "메뉴",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1148
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "베이커리",
+   "ai": "메뉴",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1429
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "디저트",
+   "ai": "메뉴",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1272
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "커피",
+   "ai": "메뉴",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1236
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "디저트",
+   "ai": "초코스모어쿠키",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1357
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "음료",
+   "ai": "딸기퐁크러쉬",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1425
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "음료",
+   "ai": "티라미수 팬케이크",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1556
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "음료",
+   "ai": "메뉴",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1216
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "디카페인",
+   "ai": "디카페인",
+   "nameOk": true,
+   "posOk": false,
+   "error": "",
+   "ms": 2519
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "결제하기",
+   "ai": "주문하기",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1320
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "전체삭제",
+   "ai": "장바구니",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1353
+  },
+  {
+   "image": "images/IMG_1627.jpg",
+   "answer": "처음으로",
+   "ai": "메뉴 탭",
+   "nameOk": false,
+   "posOk": false,
+   "error": "",
+   "ms": 1270
+  }
+ ]
+}
